@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .board-container {
+            max-width: 1000px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .board-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .search-form {
+            display: flex;
+            gap: 10px;
+        }
+        .search-form input {
+            padding: 8px;
+            width: 300px;
+        }
+        .board-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .board-table th, .board-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .board-table th {
+            background-color: #f4f4f4;
+        }
+        .board-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .write-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .write-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>webpage</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/board">Board</a></li>
+                <li><a href="/mypage">Mypage</a></li>
+                {% if session.user_id %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="board-container">
+            <div class="board-header">
+                <h2>게시판</h2>
+                <form class="search-form" method="GET" action="/board">
+                    <input type="text" name="search" placeholder="검색어를 입력하세요" value="{{ search }}">
+                    <button type="submit">검색</button>
+                </form>
+            </div>
+
+            <table class="board-table">
+                <thead>
+                    <tr>
+                        <th width="10%">번호</th>
+                        <th width="50%">제목</th>
+                        <th width="20%">작성자</th>
+                        <th width="20%">작성일</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if posts %}
+                        {% for post in posts %}
+                        <tr>
+                            <td>{{ post.id }}</td>
+                            <td><a href="/board/{{ post.id }}">{{ post.title }}</a></td>
+                            <td>{{ post.author }}</td>
+                            <td>{{ post.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" style="text-align:center;">게시글이 없습니다.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            {% if session.user_id %}
+            <a href="/board/write" class="write-btn">글쓰기</a>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer>
+        designed by GPT4.. hahaha
+    </footer>
+</body>
+</html>

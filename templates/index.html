@@ -1,33 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webpage</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
+{% block title %}Shieldus Bank - 홈{% endblock %}
 
-<body>
-    <header>
-        <h1>webpage</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/">Info</a></li>
-                <li><a href="/report">Report</a></li>
-                <li><a href="/mypage">Mypage</a></li>
-            </ul>
-        </nav>
-    </header>
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center mb-5">
+        <h1 class="display-4 fw-bold" style="color: var(--primary-color);">
+            <i class="bi bi-shield-check"></i> Shieldus Bank
+        </h1>
+        <p class="lead text-muted">안전하고 신뢰할 수 있는 금융 파트너</p>
+    </div>
+</div>
 
-    <main>
-        
-    </main>
+{% if session.user_id %}
+<!-- 로그인한 사용자 -->
+<div class="row">
+    <div class="col-12 text-center mb-4">
+        <h2 class="mb-4">환영합니다, <span style="color: var(--secondary-color);">{{ session.username }}</span>님!</h2>
+    </div>
+</div>
 
-    <footer>
-        designed by GPT4.. hahaha
-    </footer>
-</body>
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card card-custom h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem; color: var(--primary-color);">
+                    <i class="bi bi-house-door"></i>
+                </div>
+                <h5 class="card-title">대시보드</h5>
+                <p class="card-text text-muted">계좌 현황과 거래내역을 확인하세요</p>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary-custom">
+                    바로가기 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 
-</html>
+    <div class="col-md-4">
+        <div class="card card-custom h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem; color: var(--secondary-color);">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <h5 class="card-title">금융 서비스</h5>
+                <p class="card-text text-muted">입금, 출금, 송금 서비스를 이용하세요</p>
+                <a href="{{ url_for('transfer') }}" class="btn btn-gold">
+                    바로가기 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-custom h-100">
+            <div class="card-body text-center">
+                <div class="mb-3" style="font-size: 3rem; color: var(--success-color);">
+                    <i class="bi bi-chat-dots"></i>
+                </div>
+                <h5 class="card-title">고객센터</h5>
+                <p class="card-text text-muted">궁금한 점을 문의하세요</p>
+                <a href="{{ url_for('qna_list') }}" class="btn btn-success">
+                    바로가기 <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- 로그인하지 않은 사용자 -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card card-custom h-100">
+            <div class="card-body p-5">
+                <h3 class="card-title mb-4" style="color: var(--primary-color);">
+                    <i class="bi bi-bank2"></i> Shieldus Bank
+                </h3>
+                <p class="card-text mb-4">
+                    안전하고 편리한 인터넷 뱅킹 서비스를 제공합니다.<br>
+                    지금 바로 가입하고 다양한 금융 서비스를 경험해보세요.
+                </p>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> 24시간 인터넷 뱅킹</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> 빠른 송금 서비스</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> 실시간 거래내역 확인</li>
+                    <li class="mb-2"><i class="bi bi-check-circle-fill text-success"></i> 안전한 보안 시스템</li>
+                </ul>
+                <div class="mt-4">
+                    <a href="{{ url_for('register') }}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-person-plus"></i> 회원가입
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg ms-2">
+                        <i class="bi bi-box-arrow-in-right"></i> 로그인
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card card-custom h-100 bg-light">
+            <div class="card-body p-5">
+                <h4 class="card-title mb-4">
+                    <i class="bi bi-info-circle"></i> 주요 서비스
+                </h4>
+                <div class="mb-4">
+                    <h6><i class="bi bi-1-circle"></i> 계좌 관리</h6>
+                    <p class="text-muted small">여러 개의 계좌를 한눈에 관리하세요</p>
+                </div>
+                <div class="mb-4">
+                    <h6><i class="bi bi-2-circle"></i> 빠른 송금</h6>
+                    <p class="text-muted small">계좌번호만으로 간편하게 송금하세요</p>
+                </div>
+                <div class="mb-4">
+                    <h6><i class="bi bi-3-circle"></i> 거래내역 조회</h6>
+                    <p class="text-muted small">모든 거래내역을 실시간으로 확인하세요</p>
+                </div>
+                <div class="mb-4">
+                    <h6><i class="bi bi-4-circle"></i> 고객센터</h6>
+                    <p class="text-muted small">1:1 문의로 빠른 답변을 받아보세요</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- 경고 배너 -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-warning" role="alert">
+            <h5 class="alert-heading">
+                <i class="bi bi-exclamation-triangle"></i> 교육용 프로젝트 안내
+            </h5>
+            <p class="mb-0">
+                본 웹사이트는 <strong>보안 취약점 진단을 위한 교육용 프로젝트</strong>입니다.
+                SQL Injection, XSS, CSRF, File Upload, IDOR 등의 취약점이 의도적으로 포함되어 있습니다.
+                <strong class="text-danger">실제 금융 정보나 개인정보를 절대 입력하지 마세요!</strong>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 취약점 목록 -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-bug"></i> 포함된 취약점</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> SQL Injection (로그인, 검색)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> Stored XSS (문의게시판, 거래메모)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> CSRF (회원정보 수정, 송금, 출금)
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> File Upload (프로필, 첨부파일)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> IDOR (거래내역, 문의 조회)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="bi bi-shield-x text-danger"></i> 파라미터 변조 (입금, 계좌개설)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

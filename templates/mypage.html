@@ -1,47 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webpage</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <link rel="stylesheet" href="/static/css/mypage.css">
-</head>
+{% block title %}마이페이지 - Shieldus Bank{% endblock %}
 
-<body>
-    <header>
-        <h1>webpage</h1>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/">Info</a></li>
-                <li><a href="/report">Report</a></li>
-                <li><a href="/mypage">Mypage</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <div class="profile-container">
-            <img src="user-photo.jpg" alt="User Photo" class="profile-photo">
-            <div class="user-info">
-                <h2>아이디:
-                    <span id="username"></span>
-                </h2>
-                <p>이메일:
-                    <span id="email"></span>
-                </p>
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-person-circle"></i> 마이페이지</h4>
             </div>
-            <button id="editButton" class="edit-button">Modify</button>
-            <button id="deleteButton" class="delete-button">Sign Out</button>
+            <div class="card-body p-4">
+                <!-- 프로필 이미지 -->
+                <div class="text-center mb-4">
+                    {% if user.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_image) }}"
+                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="프로필">
+                    {% else %}
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center"
+                         style="width: 150px; height: 150px;">
+                        <i class="bi bi-person-fill text-white" style="font-size: 80px;"></i>
+                    </div>
+                    {% endif %}
+                </div>
 
+                <!-- 회원 정보 -->
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th width="30%" class="text-muted">아이디</th>
+                                <td><strong>{{ user.user_id }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">이름</th>
+                                <td>{{ user.name }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">이메일</th>
+                                <td>{{ user.email if user.email else '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">전화번호</th>
+                                <td>{{ user.phone if user.phone else '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">생년월일</th>
+                                <td>{{ user.birthdate if user.birthdate else '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">가입일</th>
+                                <td>{{ user.created_at[:10] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-pencil-square"></i> 회원정보 수정
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-house"></i> 대시보드로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 회원 탈퇴 -->
+                <hr class="my-4">
+                <div class="text-center">
+                    <form method="POST" action="{{ url_for('delete_account') }}" style="display: inline;">
+                        <button type="submit" class="btn btn-link text-danger"
+                                onclick="return confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')">
+                            <i class="bi bi-person-x"></i> 회원 탈퇴
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </main>
-    <script src="/static/js/mypage.js"></script>
-    <footer>
-        designed by GPT4.. hahaha
-    </footer>
-</body>
-
-</html>
+    </div>
+</div>
+{% endblock %}

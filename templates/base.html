@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shieldus Bank{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+    <style>
+        :root {
+            --primary-color: #003d82;
+            --secondary-color: #d4af37;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-text: #212529;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--light-bg);
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #00539e 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar-custom .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--secondary-color) !important;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navbar-custom .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .navbar-custom .nav-link:hover {
+            color: var(--secondary-color) !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #00539e 100%);
+            border: none;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,61,130,0.3);
+        }
+
+        .btn-gold {
+            background: var(--secondary-color);
+            border: none;
+            color: #fff;
+            font-weight: 600;
+            padding: 10px 30px;
+            transition: all 0.3s;
+        }
+
+        .btn-gold:hover {
+            background: #c9a02c;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212,175,55,0.3);
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .card-custom:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            transform: translateY(-5px);
+        }
+
+        .footer-custom {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        .alert-custom {
+            border-radius: 10px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .balance-display {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .transaction-positive {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .transaction-negative {
+            color: #dc3545;
+            font-weight: 600;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-shield-check"></i> Shieldus Bank
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">
+                            <i class="bi bi-house-door"></i> 대시보드
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-stack"></i> 금융서비스
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('create_account') }}">계좌 개설</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('deposit') }}">입금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('withdraw') }}">출금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer') }}">송금</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transactions') }}">거래내역 조회</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('qna_list') }}">
+                            <i class="bi bi-chat-dots"></i> 고객센터
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if session.user_id %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session.username }}님
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('mypage') }}">마이페이지</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">회원정보 수정</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">로그아웃</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> 로그인
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">
+                            <i class="bi bi-person-plus"></i> 회원가입
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+            <div class="alert alert-info alert-custom alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-shield-check"></i> Shieldus Bank</h5>
+                    <p class="text-white-50">안전하고 신뢰할 수 있는 금융 서비스</p>
+                    <p class="text-danger small">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>경고:</strong> 이 사이트는 교육용 취약점 진단 프로젝트입니다.
+                        실제 금융 정보를 입력하지 마세요!
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6>빠른 링크</h6>
+                    <ul class="list-unstyled text-white-50">
+                        <li><a href="{{ url_for('index') }}" class="text-white-50 text-decoration-none">홈</a></li>
+                        {% if session.user_id %}
+                        <li><a href="{{ url_for('dashboard') }}" class="text-white-50 text-decoration-none">대시보드</a></li>
+                        <li><a href="{{ url_for('qna_list') }}" class="text-white-50 text-decoration-none">고객센터</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>고객센터</h6>
+                    <ul class="list-unstyled text-white-50">
+                        <li><i class="bi bi-telephone"></i> 1588-0000</li>
+                        <li><i class="bi bi-envelope"></i> support@shieldusbank.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-white-50">
+            <div class="text-center text-white-50">
+                <p class="mb-0">&copy; 2024 Shieldus Bank. All rights reserved.</p>
+                <p class="small">본 프로젝트는 교육용이며, 실제 금융 서비스가 아닙니다.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

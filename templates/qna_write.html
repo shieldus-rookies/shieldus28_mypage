@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}문의하기 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card card-custom">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-pencil-square"></i> 1:1 문의하기</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('qna_write') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">
+                            <i class="bi bi-chat-quote"></i> 제목 <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="title" name="title"
+                               required maxlength="200" placeholder="문의 제목을 입력하세요">
+                        <div class="form-text text-danger">
+                            ⚠️ 취약점: Stored XSS - 스크립트 삽입 가능
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="question" class="form-label">
+                            <i class="bi bi-chat-text"></i> 문의 내용 <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" id="question" name="question" rows="10"
+                                  required placeholder="문의하실 내용을 자세히 작성해주세요"></textarea>
+                        <div class="form-text text-danger">
+                            ⚠️ 취약점: Stored XSS - HTML 필터링 없음
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="files" class="form-label">
+                            <i class="bi bi-paperclip"></i> 첨부파일 (최대 5개)
+                        </label>
+                        <input type="file" class="form-control" id="files" name="files" multiple>
+                        <div class="form-text">
+                            <span class="text-info">증빙 서류나 스크린샷을 첨부하실 수 있습니다</span><br>
+                            <span class="text-danger">⚠️ 취약점: File Upload - 확장자 검증 없음, 경로 검증 없음</span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-bug"></i>
+                        <strong>포함된 취약점:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Stored XSS: 제목/내용에 필터링 없이 저장</li>
+                            <li>File Upload: 확장자 및 경로 검증 없음</li>
+                            <li>관리자 타겟 XSS: 관리자가 문의 확인 시 스크립트 실행 가능</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary-custom btn-lg">
+                            <i class="bi bi-send"></i> 문의 등록
+                        </button>
+                        <a href="{{ url_for('qna_list') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> 취소
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

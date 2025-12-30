@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .view-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .post-header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .post-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .post-info {
+            color: #666;
+            font-size: 14px;
+        }
+        .post-content {
+            min-height: 300px;
+            padding: 20px 0;
+            line-height: 1.6;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-list {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-delete {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>webpage</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/board">Board</a></li>
+                <li><a href="/mypage">Mypage</a></li>
+                {% if session.user_id %}
+                <li><a href="/logout">Logout</a></li>
+                {% else %}
+                <li><a href="/login">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="view-container">
+            <div class="post-header">
+                <!-- 취약점: XSS - safe 필터로 HTML 이스케이프 비활성화 -->
+                <div class="post-title">{{ post.title | safe }}</div>
+                <div class="post-info">
+                    작성자: {{ post.author }} | 작성일: {{ post.created_at }}
+                </div>
+            </div>
+
+            <div class="post-content">
+                <!-- 취약점: Stored XSS - HTML 이스케이프 없이 출력 -->
+                {{ post.content | safe }}
+            </div>
+
+            <div class="button-group">
+                <a href="/board" class="btn btn-list">목록</a>
+                {% if session.user_id == post.author_id %}
+                <form method="POST" action="/board/{{ post.id }}/delete" style="display:inline;"
+                      onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                    <button type="submit" class="btn btn-delete">삭제</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        designed by GPT4.. hahaha
+    </footer>
+</body>
+</html>
