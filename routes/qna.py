@@ -7,7 +7,7 @@ import config
 qna_bp = Blueprint('qna', __name__)
 
 
-@qna_bp.route('/qna')
+@qna_bp.route('/qna', endpoint='qna_list')
 @login_required
 def qna_list():
     conn = get_db()
@@ -21,7 +21,7 @@ def qna_list():
     return render_template('qna_list.html', qna_items=qna_items)
 
 
-@qna_bp.route('/qna/write', methods=['GET', 'POST'])
+@qna_bp.route('/qna/write', methods=['GET', 'POST'], endpoint='qna_write')
 @login_required
 def qna_write():
     if request.method == 'POST':
@@ -63,7 +63,7 @@ def qna_write():
     return render_template('qna_write.html')
 
 
-@qna_bp.route('/qna/<int:qna_id>')
+@qna_bp.route('/qna/<int:qna_id>', endpoint='qna_detail')
 @login_required
 def qna_detail(qna_id):
     conn = get_db()
@@ -86,7 +86,7 @@ def qna_detail(qna_id):
     return render_template('qna_detail.html', qna=qna, files=files)
 
 
-@qna_bp.route('/qna/<int:qna_id>/delete', methods=['POST'])
+@qna_bp.route('/qna/<int:qna_id>/delete', methods=['POST'], endpoint='qna_delete')
 @login_required
 def qna_delete(qna_id):
     # 취약점: IDOR - 작성자 검증 없이 삭제

@@ -7,7 +7,7 @@ import config
 transfer_bp = Blueprint('transfer', __name__)
 
 
-@transfer_bp.route('/deposit', methods=['GET', 'POST'])
+@transfer_bp.route('/deposit', methods=['GET', 'POST'], endpoint='deposit')
 @login_required
 def deposit():
     if request.method == 'POST':
@@ -66,7 +66,7 @@ def deposit():
     return render_template('deposit.html', accounts=accounts)
 
 
-@transfer_bp.route('/withdraw', methods=['GET', 'POST'])
+@transfer_bp.route('/withdraw', methods=['GET', 'POST'], endpoint='withdraw')
 @login_required
 def withdraw():
     if request.method == 'POST':
@@ -120,7 +120,7 @@ def withdraw():
     return render_template('withdraw.html', accounts=accounts)
 
 
-@transfer_bp.route('/transfer', methods=['GET', 'POST'])
+@transfer_bp.route('/transfer', methods=['GET', 'POST'], endpoint='transfer')
 @login_required
 def transfer():
     if request.method == 'POST':

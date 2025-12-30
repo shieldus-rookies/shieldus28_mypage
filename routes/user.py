@@ -7,7 +7,7 @@ import config
 user_bp = Blueprint('user', __name__)
 
 
-@user_bp.route('/mypage')
+@user_bp.route('/mypage', endpoint='mypage')
 @login_required
 def mypage():
     conn = get_db()
@@ -19,7 +19,7 @@ def mypage():
     return render_template('mypage.html', user=user)
 
 
-@user_bp.route('/mypage/edit', methods=['GET', 'POST'])
+@user_bp.route('/mypage/edit', methods=['GET', 'POST'], endpoint='edit_profile')
 @login_required
 def edit_profile():
     if request.method == 'POST':
@@ -66,7 +66,7 @@ def edit_profile():
     return render_template('edit_profile.html', user=user)
 
 
-@user_bp.route('/mypage/delete', methods=['POST'])
+@user_bp.route('/mypage/delete', methods=['POST'], endpoint='delete_account')
 @login_required
 def delete_account():
     # 취약점: CSRF - CSRF 토큰 검증 없음

@@ -4,7 +4,7 @@ from utils.db import get_db
 login_bp = Blueprint('login', __name__)
 
 
-@login_bp.route('/login', methods=['GET', 'POST'])
+@login_bp.route('/login', methods=['GET', 'POST'], endpoint='login')
 def login():
     if request.method == 'POST':
         user_id = request.form['user_id']
@@ -35,7 +35,7 @@ def login():
     return render_template('login.html')
 
 
-@login_bp.route('/logout')
+@login_bp.route('/logout', endpoint='logout')
 def logout():
     # 취약점: 세션 관리 미흡 - 세션 쿠키가 완전히 제거되지 않을 수 있음
     session.clear()

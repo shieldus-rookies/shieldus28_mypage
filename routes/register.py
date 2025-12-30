@@ -5,7 +5,7 @@ from utils.db import get_db
 register_bp = Blueprint('register', __name__)
 
 
-@register_bp.route('/register', methods=['GET', 'POST'])
+@register_bp.route('/register', methods=['GET', 'POST'], endpoint='register')
 def register():
     if request.method == 'POST':
         user_id = request.form['user_id']

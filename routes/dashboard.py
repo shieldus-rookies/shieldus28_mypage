@@ -6,7 +6,7 @@ from utils.decorators import login_required
 dashboard_bp = Blueprint('dashboard', __name__)
 
 
-@dashboard_bp.route('/dashboard')
+@dashboard_bp.route('/dashboard', endpoint='dashboard')
 @login_required
 def dashboard():
     conn = get_db()
@@ -32,7 +32,7 @@ def dashboard():
     return render_template('dashboard.html', accounts=accounts, recent_transactions=recent_transactions)
 
 
-@dashboard_bp.route('/account/create', methods=['GET', 'POST'])
+@dashboard_bp.route('/account/create', methods=['GET', 'POST'], endpoint='create_account')
 @login_required
 def create_account():
     if request.method == 'POST':
@@ -66,7 +66,7 @@ def create_account():
     return render_template('create_account.html')
 
 
-@dashboard_bp.route('/transactions')
+@dashboard_bp.route('/transactions', endpoint='transactions')
 @login_required
 def transactions():
     conn = get_db()
@@ -111,7 +111,7 @@ def transactions():
     return render_template('transactions.html', transactions=trans_list, search=search)
 
 
-@dashboard_bp.route('/transaction/<int:transaction_id>')
+@dashboard_bp.route('/transaction/<int:transaction_id>', endpoint='transaction_detail')
 @login_required
 def transaction_detail(transaction_id):
     conn = get_db()
