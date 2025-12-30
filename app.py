@@ -90,7 +90,7 @@ def login():
             cursor.execute(f"SELECT * FROM users WHERE username='{username}' AND password='{password}'")
             user = cursor.fetchone()
 
-            if user and bcrypt.check_password_hash(user['password'], password):
+            if user and user['password'] == password:
                 user = User(user['id'], user['username'], user['email'])
                 login_user(user)
                 return redirect(url_for('index'))
