@@ -1,131 +1,59 @@
-from flask import Flask, render_template, redirect, request, url_for, redirect, jsonify
+from flask import Flask, render_template
 import os
-from flask_login import LoginManager, login_user, login_required, logout_user, current_user, UserMixin
-from flask_bcrypt import Bcrypt
-from bot import *
-from urllib.parse import *
-import pymysql
-
-# DB_HOST = os.getenv("DB_HOST", "localhost")
-# DB_PORT = int(os.getenv("DB_PORT", "3306"))
-# DB_USER = os.getenv("DB_USER", "poka")
-# DB_PASSWORD = os.getenv("DB_PASSWORD", "poka")
-# DB_NAME = os.getenv("DB_NAME", "prob_csp")
-
-# conn = pymysql.connect(
-#     host=DB_HOST, user=DB_USER, password=DB_PASSWORD, db=DB_NAME, port=DB_PORT,
-#     cursorclass=pymysql.cursors.DictCursor
-# )
+import config
+from routes import register_blueprints
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
-bcrypt = Bcrypt(app)
+app.secret_key = config.SECRET_KEY
 
-@app.after_request
-def apply_csp(response):
-    token = request.args.get('token', '')
-    response.headers['Content-Security-Policy'] = (
-        "object-src 'none'; "
-        "script-src 'self'; "
-        "style-src 'self'; "
-        f"report-uri /csp-report?token={token}"
-    )
-    return response
+# 업로드 폴더 생성
+for folder in config.UPLOAD_FOLDERS:
+    os.makedirs(folder, exist_ok=True)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
 
-class User(UserMixin):
-    def __init__(self, id, username, email):
-        self.id = id
-        self.username = username
-        self.email = email
-
-@login_manager.user_loader
-def load_user(user_id):
-    with conn.cursor() as cursor:
-        cursor.execute("SELECT * FROM users WHERE id=%s", (int(user_id),))
-        row = cursor.fetchone()
-    if not row:
-        return None
-    return User(row['id'], row['username'], row['email'])
-
+# ==================== 메인 페이지 ====================
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['password']
-        password_confirm = request.form['password_confirm']
-        if password != password_confirm:
-            return 'Passwords do not match'
-        
-        password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
-        with conn.cursor() as cursor:
-            try:
-                cursor.execute(
-                    "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-                    (username, email, password_hash)
-                )
-                conn.commit()
-            except pymysql.err.IntegrityError:
-                return 'Username already exists'
-        return redirect(url_for('login'))
-    return render_template('register.html')
+# ==================== 에러 핸들러 ====================
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
-            user = cursor.fetchone()
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
 
-            if user and bcrypt.check_password_hash(user['password'], password):
-                user = User(user['id'], user['username'], user['email'])
-                login_user(user)
-                return redirect(url_for('index'))
-            else:
-                return "아이디 또는 비밀번호가 잘못되었습니다."
-    return render_template('login.html')
 
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
+# ==================== Blueprint 등록 ====================
 
-@app.route('/mypage')
-@login_required
-def mypage():
-    return render_template('mypage.html')
+register_blueprints(app)
 
-@app.route('/mypage_modify', methods=['GET', 'POST'])
-@login_required
-def mypage_modify():
-    if request.method == 'POST':
-        username = request.form['username']
-        email = request.form['email']
+# URL 별칭 추가 (템플릿 호환성을 위해)
+# Blueprint의 'blueprint.function' 엔드포인트를 'function'으로도 접근 가능하게 함
+app.add_url_rule('/login_alias', endpoint='login', view_func=app.view_functions.get('login.login'), methods=['GET', 'POST'])
+app.add_url_rule('/register_alias', endpoint='register', view_func=app.view_functions.get('register.register'), methods=['GET', 'POST'])
+app.add_url_rule('/logout_alias', endpoint='logout', view_func=app.view_functions.get('login.logout'))
+app.add_url_rule('/dashboard_alias', endpoint='dashboard', view_func=app.view_functions.get('dashboard.dashboard'))
+app.add_url_rule('/mypage_alias', endpoint='mypage', view_func=app.view_functions.get('user.mypage'))
+app.add_url_rule('/edit_profile_alias', endpoint='edit_profile', view_func=app.view_functions.get('user.edit_profile'), methods=['GET', 'POST'])
+app.add_url_rule('/delete_account_alias', endpoint='delete_account', view_func=app.view_functions.get('user.delete_account'), methods=['POST'])
+app.add_url_rule('/qna_list_alias', endpoint='qna_list', view_func=app.view_functions.get('qna.qna_list'))
+app.add_url_rule('/qna_write_alias', endpoint='qna_write', view_func=app.view_functions.get('qna.qna_write'), methods=['GET', 'POST'])
+app.add_url_rule('/qna_detail_alias', endpoint='qna_detail', view_func=app.view_functions.get('qna.qna_detail'))
+app.add_url_rule('/qna_delete_alias', endpoint='qna_delete', view_func=app.view_functions.get('qna.qna_delete'), methods=['POST'])
+app.add_url_rule('/transactions_alias', endpoint='transactions', view_func=app.view_functions.get('dashboard.transactions'))
+app.add_url_rule('/transaction_detail_alias', endpoint='transaction_detail', view_func=app.view_functions.get('dashboard.transaction_detail'))
+app.add_url_rule('/create_account_alias', endpoint='create_account', view_func=app.view_functions.get('dashboard.create_account'), methods=['GET', 'POST'])
+app.add_url_rule('/deposit_alias', endpoint='deposit', view_func=app.view_functions.get('transfer.deposit'), methods=['GET', 'POST'])
+app.add_url_rule('/withdraw_alias', endpoint='withdraw', view_func=app.view_functions.get('transfer.withdraw'), methods=['GET', 'POST'])
+app.add_url_rule('/transfer_alias', endpoint='transfer', view_func=app.view_functions.get('transfer.transfer'), methods=['GET', 'POST'])
 
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "UPDATE users SET username=%s, email=%s WHERE id=%s",
-                (username, email, current_user.id)
-            )
-            conn.commit()
-        return redirect(url_for('mypage'))
-    
-    data = request.args.to_dict()
-    show_popup = bool(data)
-    return render_template('mypage_modify.html', data=data, show_popup=show_popup)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5000, debug=True)

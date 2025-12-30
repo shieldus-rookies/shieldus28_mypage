@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}거래내역 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-list-ul"></i> 거래내역</h2>
+        <p class="text-muted">모든 거래내역을 조회하실 수 있습니다</p>
+    </div>
+</div>
+
+<!-- 검색 폼 -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('transactions') }}" class="row g-3">
+                    <div class="col-md-10">
+                        <label for="search" class="form-label">
+                            <i class="bi bi-search"></i> 검색어
+                        </label>
+                        <input type="text" class="form-control" id="search" name="search"
+                               value="{{ search }}" placeholder="거래 설명 또는 수취인 검색">
+                        <div class="form-text text-danger">
+                            ⚠️ 취약점: SQL Injection - 검색어를 직접 쿼리에 삽입
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary-custom w-100">
+                            <i class="bi bi-search"></i> 검색
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 거래내역 테이블 -->
+<div class="row">
+    <div class="col-12">
+        {% if transactions %}
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>거래일시</th>
+                                <th>계좌번호</th>
+                                <th>구분</th>
+                                <th>내용</th>
+                                <th class="text-end">금액</th>
+                                <th class="text-end">잔액</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for trans in transactions %}
+                            <tr>
+                                <td>{{ trans.created_at[:16] }}</td>
+                                <td><small class="text-muted">{{ trans.account_number }}</small></td>
+                                <td>
+                                    {% if trans.transaction_type == 'DEPOSIT' %}
+                                        <span class="badge bg-success">입금</span>
+                                    {% elif trans.transaction_type == 'WITHDRAW' %}
+                                        <span class="badge bg-danger">출금</span>
+                                    {% else %}
+                                        <span class="badge bg-primary">송금</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ trans.description }}
+                                    {% if trans.recipient_name %}
+                                        <br><small class="text-muted">→ {{ trans.recipient_name }}</small>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end {% if trans.amount > 0 %}transaction-positive{% else %}transaction-negative{% endif %}">
+                                    <strong>{{ "{:+,.0f}".format(trans.amount) }}원</strong>
+                                </td>
+                                <td class="text-end">{{ "{:,.0f}".format(trans.balance_after) }}원</td>
+                                <td>
+                                    <a href="{{ url_for('transaction_detail', transaction_id=trans.id) }}"
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> 상세
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            {% if search %}
+                검색 결과가 없습니다.
+            {% else %}
+                거래내역이 없습니다.
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

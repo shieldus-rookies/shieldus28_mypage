@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}송금 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header text-white" style="background: var(--primary-color);">
+                <h4 class="mb-0"><i class="bi bi-arrow-left-right"></i> 송금</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('transfer') }}">
+                    <div class="mb-3">
+                        <label for="from_account_id" class="form-label">
+                            <i class="bi bi-wallet"></i> 출금 계좌 <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select" id="from_account_id" name="from_account_id" required>
+                            {% for account in accounts %}
+                            <option value="{{ account.id }}">
+                                {{ account.account_number }}
+                                ({% if account.account_type == 'SAVINGS' %}입출금통장{% else %}자유입출금{% endif %})
+                                - 잔액: {{ "{:,.0f}".format(account.balance) }}원
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="to_account_number" class="form-label">
+                            <i class="bi bi-credit-card"></i> 받는 계좌번호 <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="to_account_number" name="to_account_number"
+                               required placeholder="110-123-456789" pattern="[0-9]{3}-[0-9]{3}-[0-9]{6}">
+                        <div class="form-text">계좌번호 형식: 110-123-456789</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="recipient_name" class="form-label">
+                            <i class="bi bi-person"></i> 받는 분 성함
+                        </label>
+                        <input type="text" class="form-control" id="recipient_name" name="recipient_name"
+                               placeholder="홍길동" maxlength="50">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">
+                            <i class="bi bi-cash-stack"></i> 송금 금액 <span class="text-danger">*</span>
+                        </label>
+                        <input type="number" class="form-control" id="amount" name="amount"
+                               required min="1000" step="1000" placeholder="10000">
+                        <div class="form-text">최소 송금액: 1,000원</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="memo" class="form-label">
+                            <i class="bi bi-chat-text"></i> 송금 메모
+                        </label>
+                        <input type="text" class="form-control" id="memo" name="memo"
+                               placeholder="생활비" maxlength="100">
+                        <div class="form-text text-danger">
+                            ⚠️ 취약점: XSS - 스크립트 삽입 가능 (필터링 없음)
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-bug"></i>
+                        <strong>포함된 취약점:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>CSRF: CSRF 토큰 검증 없음</li>
+                            <li>Stored XSS: 메모에 스크립트 삽입 가능</li>
+                            <li>파라미터 변조: 금액/수취인 서버 검증 미흡</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary-custom btn-lg">
+                            <i class="bi bi-send"></i> 송금하기
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> 취소
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,104 @@
+:root {
+    --primary-color: #003d82;
+    --secondary-color: #d4af37;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --light-bg: #f8f9fa;
+    --dark-text: #212529;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--light-bg);
+}
+
+.navbar-custom {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #00539e 100%);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-custom .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--secondary-color) !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.navbar-custom .nav-link:hover {
+    color: var(--secondary-color) !important;
+    transform: translateY(-2px);
+}
+
+.btn-primary-custom {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #00539e 100%);
+    border: none;
+    padding: 10px 30px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 61, 130, 0.3);
+}
+
+.btn-gold {
+    background: var(--secondary-color);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 30px;
+    transition: all 0.3s;
+}
+
+.btn-gold:hover {
+    background: #c9a02c;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.card-custom {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+}
+
+.card-custom:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+}
+
+.footer-custom {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 30px 0;
+    margin-top: 50px;
+}
+
+.alert-custom {
+    border-radius: 10px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.balance-display {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.transaction-positive {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.transaction-negative {
+    color: #dc3545;
+    font-weight: 600;
+}
