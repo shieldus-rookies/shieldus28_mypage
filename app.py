@@ -87,7 +87,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM users WHERE username=%s", (username,))
+            cursor.execute(f"SELECT * FROM users WHERE username='{username}' AND password='{password}'")
             user = cursor.fetchone()
 
             if user and bcrypt.check_password_hash(user['password'], password):
