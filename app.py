@@ -94,8 +94,10 @@ def login():
                 user = User(user['id'], user['username'], user['email'])
                 login_user(user)
                 return redirect(url_for('index'))
-            else:
-                return "아이디 또는 비밀번호가 잘못되었습니다."
+            if not user:
+                return "존재하지 않는 아이디입니다." # 아이디 존재 여부 노출
+            elif user['password'] != password:
+                return "비밀번호가 틀렸습니다."
     return render_template('login.html')
 
 @app.route('/logout')
