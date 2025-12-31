@@ -28,10 +28,11 @@ CREATE TABLE IF NOT EXISTS accounts (
 
 CREATE TABLE IF NOT EXISTS transactions (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  from_acc INT NOT NULL,
-  to_acc INT NOT NULL,
+  from_acc VARCHAR(20) NOT NULL,
+  to_acc VARCHAR(20) NOT NULL,
   amount DECIMAL(18,2),
-  memo TEXT,
+  balance_after DECIMAL(18,2),
+  description TEXT,
   xml_log TEXT,
   accounts_id INT NOT NULL,
   INDEX fk_transactions_accounts1_idx (accounts_id),

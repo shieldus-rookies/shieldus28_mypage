@@ -28,9 +28,9 @@
                 <div class="row mb-3">
                     <div class="col-4 text-muted">거래 유형</div>
                     <div class="col-8">
-                        {% if transaction.transaction_type == 'DEPOSIT' %}
+                        {% if transaction.from_acc == '0' %}
                             <span class="badge bg-success">입금</span>
-                        {% elif transaction.transaction_type == 'WITHDRAW' %}
+                        {% elif transaction.to_acc == '0' %}
                             <span class="badge bg-danger">출금</span>
                         {% else %}
                             <span class="badge bg-primary">송금</span>
