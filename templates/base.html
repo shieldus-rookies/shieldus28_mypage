@@ -41,12 +41,12 @@
                             <i class="bi bi-cash-stack"></i> 금융서비스
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{{ url_for('create_account') }}">계좌 개설</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('deposit') }}">입금</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('withdraw') }}">출금</a></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transfer') }}">송금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.create_account') }}">계좌 개설</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.deposit') }}">입금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.withdraw') }}">출금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.transfer') }}">송금</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="{{ url_for('transactions') }}">거래내역 조회</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.transactions') }}">거래내역 조회</a></li>
                         </ul>
                     </li>
                     <li class="nav-item">
