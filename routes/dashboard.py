@@ -103,7 +103,7 @@ def transactions():
             SELECT t.*, a.account_number
             FROM transactions t
             JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.user_id = {session['user_id']}
+            WHERE a.users_id = {session['user_id']}
             ORDER BY t.created_at DESC
         """
 
@@ -132,3 +132,4 @@ def transaction_detail(transaction_id):
 
     # 취약점: Stored XSS - description을 템플릿에서 |safe로 출력
     return render_template('transaction_detail.html', transaction=transaction)
+
