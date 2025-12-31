@@ -22,19 +22,9 @@ def dashboard():
     conn = get_db()
     cursor = conn.cursor()
 
-    # 변경: SELECT * 제거, 스키마 의존 컬럼만 명시
-    cursor.execute(
-        """
-        SELECT
-            id,
-            account_number,
-            balance,
-            account_type
-        FROM accounts
-        WHERE user_id = ?
-        """,
-        (user_id,)
-    )
+    # 사용자 계좌 목록 조회
+    # cursor.execute("SELECT * FROM accounts WHERE users_id = ?", (session['user_id'],))
+    cursor.execute(f"SELECT * FROM accounts WHERE users_id = {session['user_id']}")
     accounts = cursor.fetchall()
 
     # 변경: t.* 제거, 필요한 컬럼만 조회
@@ -50,8 +40,8 @@ def dashboard():
             a.account_number,
             a.account_type
         FROM transactions t
-        JOIN accounts a ON t.account_id = a.id
-        WHERE a.user_id = ?
+        JOIN accounts a ON t.accounts_id = a.id
+        WHERE a.users_id = ?
         ORDER BY t.created_at DESC
         LIMIT 10
         """,
@@ -100,13 +90,12 @@ def create_account():
         conn = get_db()
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                """
-                INSERT INTO accounts (account_number, user_id, balance, account_type)
-                VALUES (?, ?, ?, ?)
-                """,
-                (account_number, user_id, initial_balance, account_type)
-            )
+            # cursor.execute(
+            #     "INSERT INTO accounts (account_number, user_id, balance, account_type) VALUES (?, ?, ?, ?)",
+            #     (account_number, session['user_id'], initial_balance, account_type)
+            # )
+            query = f"INSERT INTO accounts (account_number, users_id, balance, account_type) VALUES ('{account_number}', {session['user_id']}, {initial_balance}, '{account_type}')"
+            cursor.execute(query)
             conn.commit()
             flash(f'계좌가 개설되었습니다! 계좌번호: {account_number}')
             return redirect(url_for('dashboard.dashboard'))
@@ -155,13 +144,32 @@ def transactions():
             return redirect(url_for('dashboard.transactions'))
 
     if search:
-        # 취약점: SQL Injection
-        # 수정: LIKE 검색도 바인딩 사용
-        query += " AND (t.description LIKE ? OR t.recipient_name LIKE ?) "
-        like = f"%{search}%"
-        params.extend([like, like])
-
-    query += " ORDER BY t.created_at DESC "
+        # 취약점: SQL Injection - 검색어 직접 결합
+        query = f"""
+            SELECT t.*, a.account_number
+            FROM transactions t
+            JOIN accounts a ON t.accounts_id = a.id
+            WHERE a.users_id = {session['user_id']}
+            AND (t.description LIKE '%{search}%' OR t.recipient_name LIKE '%{search}%')
+            ORDER BY t.created_at DESC
+        """
+    elif account_id:
+        # 취약점: IDOR - account_id 조작 가능
+        query = f"""
+            SELECT t.*, a.account_number
+            FROM transactions t
+            JOIN accounts a ON t.accounts_id = a.id
+            WHERE a.id = {account_id}
+            ORDER BY t.created_at DESC
+        """
+    else:
+        query = f"""
+            SELECT t.*, a.account_number
+            FROM transactions t
+            JOIN accounts a ON t.accounts_id = a.id
+            WHERE a.users_id = {session['user_id']}
+            ORDER BY t.created_at DESC
+        """
 
     cursor.execute(query, tuple(params))
     trans_list = cursor.fetchall()
@@ -182,25 +190,9 @@ def transaction_detail(transaction_id):
     conn = get_db()
     cursor = conn.cursor()
 
-    # 취약점: IDOR
-    # 수정: 단건 조회에도 소유자 검증 추가
-    cursor.execute(
-        """
-        SELECT
-            t.id,
-            t.account_id,
-            t.amount,
-            t.description,
-            t.recipient_name,
-            t.created_at,
-            a.account_number
-        FROM transactions t
-        JOIN accounts a ON t.account_id = a.id
-        WHERE t.id = ?
-          AND a.user_id = ?
-        """,
-        (transaction_id, user_id)
-    )
+    # 취약점: IDOR - 소유자 검증 없이 거래내역 조회
+    query = f"SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE t.id = {transaction_id}"
+    cursor.execute(query)
     transaction = cursor.fetchone()
     conn.close()
 

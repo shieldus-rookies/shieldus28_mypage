@@ -40,7 +40,7 @@
                         {{ "{:,.0f}".format(account.balance) }} 원
                     </div>
                     <div class="d-grid gap-2">
-                        <a href="{{ url_for('transactions', account_id=account.id) }}" class="btn btn-outline-primary btn-sm">
+                        <a href="{{ url_for('dashboard.transactions', account_id=account.id) }}" class="btn btn-outline-primary btn-sm">
                             <i class="bi bi-list-ul"></i> 거래내역
                         </a>
                     </div>
@@ -52,7 +52,7 @@
         <div class="col-12">
             <div class="alert alert-info">
                 <i class="bi bi-info-circle"></i> 등록된 계좌가 없습니다.
-                <a href="{{ url_for('create_account') }}" class="alert-link">새 계좌를 개설</a>하세요.
+                <a href="{{ url_for('dashboard.create_account') }}" class="alert-link">새 계좌를 개설</a>하세요.
             </div>
         </div>
     {% endif %}
@@ -64,7 +64,7 @@
                     <i class="bi bi-plus-circle"></i>
                 </div>
                 <h6 class="mb-3">새 계좌 개설</h6>
-                <a href="{{ url_for('create_account') }}" class="btn btn-gold">
+                <a href="{{ url_for('dashboard.create_account') }}" class="btn btn-gold">
                     계좌 개설하기
                 </a>
             </div>
@@ -81,7 +81,7 @@
 
 <div class="row g-3 mb-5">
     <div class="col-md-3">
-        <a href="{{ url_for('deposit') }}" class="text-decoration-none">
+        <a href="{{ url_for('transfer.deposit') }}" class="text-decoration-none">
             <div class="card card-custom text-center">
                 <div class="card-body">
                     <i class="bi bi-plus-circle" style="font-size: 2rem; color: var(--success-color);"></i>
@@ -91,7 +91,7 @@
         </a>
     </div>
     <div class="col-md-3">
-        <a href="{{ url_for('withdraw') }}" class="text-decoration-none">
+        <a href="{{ url_for('transfer.withdraw') }}" class="text-decoration-none">
             <div class="card card-custom text-center">
                 <div class="card-body">
                     <i class="bi bi-dash-circle" style="font-size: 2rem; color: var(--danger-color);"></i>

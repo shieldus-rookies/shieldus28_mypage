@@ -15,7 +15,7 @@
     <div class="col-12">
         <div class="card card-custom">
             <div class="card-body">
-                <form method="GET" action="{{ url_for('transactions') }}" class="row g-3">
+                <form method="GET" action="{{ url_for('dashboard.transactions') }}" class="row g-3">
                     <div class="col-md-10">
                         <label for="search" class="form-label">
                             <i class="bi bi-search"></i> 검색어
@@ -81,7 +81,7 @@
                                 </td>
                                 <td class="text-end">{{ "{:,.0f}".format(trans.balance_after) }}원</td>
                                 <td>
-                                    <a href="{{ url_for('transaction_detail', transaction_id=trans.id) }}"
+                                    <a href="{{ url_for('dashboard.transaction_detail', transaction_id=trans.id) }}"
                                        class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-eye"></i> 상세
                                     </a>

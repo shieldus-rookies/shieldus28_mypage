@@ -10,7 +10,7 @@
                 <h4 class="mb-0"><i class="bi bi-pencil-square"></i> 회원정보 수정</h4>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ url_for('edit_profile') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ url_for('user.edit_profile') }}" enctype="multipart/form-data">
                     <!-- 프로필 이미지 -->
                     <div class="text-center mb-4">
                         {% if user.profile_image %}
@@ -78,7 +78,7 @@
                         <button type="submit" class="btn btn-warning btn-lg">
                             <i class="bi bi-check-circle"></i> 수정하기
                         </button>
-                        <a href="{{ url_for('mypage') }}" class="btn btn-outline-secondary">
+                        <a href="{{ url_for('user.mypage') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> 취소
                         </a>
                     </div>

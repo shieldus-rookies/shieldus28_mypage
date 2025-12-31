@@ -14,7 +14,10 @@ def qna_list():
     cursor = conn.cursor()
 
     # 자신이 작성한 문의만 조회 (정상적인 경우)
-    cursor.execute("SELECT * FROM qna WHERE user_id = ? ORDER BY created_at DESC", (session['user_id'],))
+    # cursor.execute("SELECT * FROM qna WHERE user_id = ? ORDER BY created_at DESC", (session['user_id'],))
+    cursor.execute(
+        f"SELECT * FROM posts WHERE users_id = {session['user_id']} ORDER BY created_at DESC"
+    )
     qna_items = cursor.fetchall()
     conn.close()
 
@@ -26,17 +29,20 @@ def qna_list():
 def qna_write():
     if request.method == 'POST':
         title = request.form['title']
-        question = request.form['question']
+        content = request.form['content']
 
         # 취약점: Stored XSS - 제목/내용 필터링 없음
 
         conn = get_db()
         cursor = conn.cursor()
+        # cursor.execute(
+        #     "INSERT INTO qna (user_id, title, question) VALUES (?, ?, ?)",
+        #     (session['user_id'], title, question)
+        # )
         cursor.execute(
-            "INSERT INTO qna (user_id, title, question) VALUES (?, ?, ?)",
-            (session['user_id'], title, question)
-        )
-        qna_id = cursor.lastrowid
+                f"INSERT INTO posts (users_id, title, content) VALUES ({session['user_id']}, '{title}', '{content}')"
+            )
+        post_id = cursor.lastrowid
 
         # 파일 업로드 처리
         files = request.files.getlist('files')
@@ -49,9 +55,12 @@ def qna_write():
 
                 # 파일 정보 저장
                 file_size = os.path.getsize(filepath)
+                # cursor.execute(
+                #     "INSERT INTO post_files (post_id, filename, filepath, file_size) VALUES (?, ?, ?, ?)",
+                #     (post_id, filename, filepath, file_size)
+                # )
                 cursor.execute(
-                    "INSERT INTO qna_files (qna_id, filename, filepath, file_size) VALUES (?, ?, ?, ?)",
-                    (qna_id, filename, filepath, file_size)
+                    f"INSERT INTO post_files (post_id, filename, filepath, file_size) VALUES ({post_id}, '{filename}', '{filepath}', {file_size})"
                 )
 
         conn.commit()
@@ -70,7 +79,8 @@ def qna_detail(qna_id):
     cursor = conn.cursor()
 
     # 취약점: IDOR - 작성자 검증 없이 문의 조회
-    cursor.execute("SELECT * FROM qna WHERE id = ?", (qna_id,))
+    # cursor.execute("SELECT * FROM posts WHERE id = ?", (qna_id,))
+    cursor.execute(f"SELECT * FROM posts WHERE id = {qna_id}")
     qna = cursor.fetchone()
 
     if not qna:
@@ -78,7 +88,8 @@ def qna_detail(qna_id):
         return redirect(url_for('qna_list'))
 
     # 첨부파일 조회
-    cursor.execute("SELECT * FROM qna_files WHERE qna_id = ?", (qna_id,))
+    # cursor.execute("SELECT * FROM post_files WHERE post_id = ?", (qna_id,))
+    cursor.execute(f"SELECT * FROM post_files WHERE post_id = {qna_id}")
     files = cursor.fetchall()
     conn.close()
 
@@ -92,7 +103,8 @@ def qna_delete(qna_id):
     # 취약점: IDOR - 작성자 검증 없이 삭제
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM qna WHERE id = ?", (qna_id,))
+    # cursor.execute("DELETE FROM posts WHERE id = ?", (qna_id,))
+    cursor.execute(f"DELETE FROM posts WHERE id = {qna_id}")
     conn.commit()
     conn.close()
 

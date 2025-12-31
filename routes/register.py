@@ -28,7 +28,7 @@ def register():
             #     "INSERT INTO users (username, password, nickname, email) VALUES (?, ?, ?, ?)",
             #     (username, password, nickname, email)
             # )
-            query = f"INSERT INTO users (username, password, nickname, email) VALUES ({username}, {password}, {nickname}, {email})"
+            query = f"INSERT INTO users (username, password, nickname, email) VALUES ('{username}', '{password}', '{nickname}', '{email}')"
             cursor.execute(query)
             conn.commit()
             flash('회원가입이 완료되었습니다. 로그인해주세요.')

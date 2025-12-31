@@ -56,7 +56,7 @@ def deposit():
         #     (account_id, 'DEPOSIT', amount, new_balance, description, receipt_filename)
         # )
 
-        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, '0', {account_number}, {account_id}, {amount}, {new_balance}, '{description}')"
+        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, '0', '{account_number}', {amount}, {new_balance}, '{description}')"
         cursor.execute(query)
 
         conn.commit()
@@ -120,7 +120,7 @@ def withdraw():
         #     "INSERT INTO transactions (account_id, from_acc, to_acc, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)",
         #     (account_id, account_number, '0', -amount, new_balance, description)
         # )
-        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, {account_number}, '0', -{amount}, {new_balance}, '{description}')"
+        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, '{account_number}', '0', -{amount}, {new_balance}, '{description}')"
         cursor.execute(query)
 
         conn.commit()
@@ -191,7 +191,7 @@ def transfer():
         #     "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description, recipient_account, recipient_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
         #     (from_account['id'], 'TRANSFER', -amount, new_from_balance, memo, to_account_number, recipient_name)
         # )
-        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description, recipient_account, recipient_name) VALUES ({from_account['id']}, {from_account['account_number']}, {to_account['account_number']}, -{amount}, {new_from_balance}, '{description}', '{to_account_number}', '{recipient_name}')"
+        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({from_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', -{amount}, {new_from_balance}, '{description}')"
         cursor.execute(query)
 
         # 입금 처리
@@ -203,13 +203,13 @@ def transfer():
         #     "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description, recipient_account, recipient_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
         #     (to_account['id'], 'TRANSFER', amount, new_to_balance, f'{from_account["account_number"]}에서 받음', from_account['account_number'], session['username'])
         # )
-        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description, recipient_account, recipient_name) VALUES ({to_account['id']}, {from_account['account_number']}, {to_account['account_number']}, {amount}, {new_to_balance}, '{from_account['account_number']}에서 받음', '{from_account['account_number']}', '{session['username']}')"
+        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({to_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', {amount}, {new_to_balance}, '{from_account['account_number']}에서 받음')"
         cursor.execute(query)
 
         conn.commit()
         conn.close()
 
-        flash(f'{recipient_name}님에게 {amount:,.0f}원을 송금했습니다.')
+        flash(f'{to_account_number}로 {amount:,.0f}원을 송금했습니다.')
         return redirect(url_for('dashboard'))
 
     # GET 요청
