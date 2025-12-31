@@ -13,15 +13,15 @@ def dashboard():
     cursor = conn.cursor()
 
     # 사용자 계좌 목록 조회
-    cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (session['user_id'],))
+    cursor.execute("SELECT * FROM accounts WHERE users_id = ?", (session['user_id'],))
     accounts = cursor.fetchall()
 
     # 최근 거래내역 (최근 10건)
     cursor.execute("""
         SELECT t.*, a.account_number, a.account_type
         FROM transactions t
-        JOIN accounts a ON t.account_id = a.id
-        WHERE a.user_id = ?
+        JOIN accounts a ON t.accounts_id = a.id
+        WHERE a.users_id = ?
         ORDER BY t.created_at DESC
         LIMIT 10
     """, (session['user_id'],))
@@ -81,8 +81,8 @@ def transactions():
         query = f"""
             SELECT t.*, a.account_number
             FROM transactions t
-            JOIN accounts a ON t.account_id = a.id
-            WHERE a.user_id = {session['user_id']}
+            JOIN accounts a ON t.accounts_id = a.id
+            WHERE a.users_id = {session['user_id']}
             AND (t.description LIKE '%{search}%' OR t.recipient_name LIKE '%{search}%')
             ORDER BY t.created_at DESC
         """
@@ -91,7 +91,7 @@ def transactions():
         query = f"""
             SELECT t.*, a.account_number
             FROM transactions t
-            JOIN accounts a ON t.account_id = a.id
+            JOIN accounts a ON t.accounts_id = a.id
             WHERE a.id = {account_id}
             ORDER BY t.created_at DESC
         """
@@ -99,8 +99,8 @@ def transactions():
         query = f"""
             SELECT t.*, a.account_number
             FROM transactions t
-            JOIN accounts a ON t.account_id = a.id
-            WHERE a.user_id = {session['user_id']}
+            JOIN accounts a ON t.accounts_id = a.id
+            WHERE a.users_id = {session['user_id']}
             ORDER BY t.created_at DESC
         """
 
@@ -118,7 +118,7 @@ def transaction_detail(transaction_id):
     cursor = conn.cursor()
 
     # 취약점: IDOR - 소유자 검증 없이 거래내역 조회
-    query = f"SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.account_id = a.id WHERE t.id = {transaction_id}"
+    query = f"SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE t.id = {transaction_id}"
     cursor.execute(query)
     transaction = cursor.fetchone()
     conn.close()

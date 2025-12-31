@@ -10,7 +10,7 @@
                 <h4 class="mb-0"><i class="bi bi-arrow-left-right"></i> 송금</h4>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ url_for('transfer') }}">
+                <form method="POST" action="{{ url_for('dashboard.transfer') }}">
                     <div class="mb-3">
                         <label for="from_account_id" class="form-label">
                             <i class="bi bi-wallet"></i> 출금 계좌 <span class="text-danger">*</span>
@@ -77,7 +77,7 @@
                         <button type="submit" class="btn btn-primary-custom btn-lg">
                             <i class="bi bi-send"></i> 송금하기
                         </button>
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                        <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> 취소
                         </a>
                     </div>

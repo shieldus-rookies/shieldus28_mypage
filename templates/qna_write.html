@@ -10,7 +10,7 @@
                 <h4 class="mb-0"><i class="bi bi-pencil-square"></i> 1:1 문의하기</h4>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ url_for('qna_write') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ url_for('qna.qna_write') }}" enctype="multipart/form-data">
                     <div class="mb-3">
                         <label for="title" class="form-label">
                             <i class="bi bi-chat-quote"></i> 제목 <span class="text-danger">*</span>
@@ -58,7 +58,7 @@
                         <button type="submit" class="btn btn-primary-custom btn-lg">
                             <i class="bi bi-send"></i> 문의 등록
                         </button>
-                        <a href="{{ url_for('qna_list') }}" class="btn btn-outline-secondary">
+                        <a href="{{ url_for('qna.qna_list') }}" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> 취소
                         </a>
                     </div>

@@ -12,7 +12,8 @@ user_bp = Blueprint('user', __name__)
 def mypage():
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+    #cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+    cursor.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
     user = cursor.fetchone()
     conn.close()
 
@@ -25,24 +26,25 @@ def edit_profile():
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
-        phone = request.form['phone']
+        #phone = request.form['phone']
 
         # 프로필 이미지 업로드
-        profile_image = request.files.get('profile_image')
-        profile_filename = None
+        # profile_image = request.files.get('profile_image')
+        # profile_filename = None
 
-        if profile_image and profile_image.filename:
-            # 취약점: File Upload - 확장자/Content-Type 검증 없음
-            profile_filename = profile_image.filename
-            profile_path = os.path.join(config.PROFILE_FOLDER, profile_filename)
-            profile_image.save(profile_path)
+        # if profile_image and profile_image.filename:
+        #     # 취약점: File Upload - 확장자/Content-Type 검증 없음
+        #     profile_filename = profile_image.filename
+        #     profile_path = os.path.join(config.PROFILE_FOLDER, profile_filename)
+        #     profile_image.save(profile_path)
 
         # 취약점: CSRF - CSRF 토큰 검증 없음
         # 취약점: SQL Injection - 이름/이메일 필드를 통한 SQLi
-        if profile_filename:
-            query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}', profile_image='{profile_filename}' WHERE id={session['user_id']}"
-        else:
-            query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}' WHERE id={session['user_id']}"
+        # if profile_filename:
+        #     query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}', profile_image='{profile_filename}' WHERE id={session['user_id']}"
+        # else:
+        #     query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}' WHERE id={session['user_id']}"
+        query = f"UPDATE users SET name='{name}', email='{email}' WHERE id={session['user_id']}"
 
         conn = get_db()
         cursor = conn.cursor()
@@ -59,7 +61,8 @@ def edit_profile():
     # GET 요청
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+    #cursor.execute("SELECT * FROM users WHERE id = ?", (session['user_id'],))
+    cursor.execute(f"SELECT * FROM users WHERE id = {session['user_id']}")
     user = cursor.fetchone()
     conn.close()
 
@@ -74,7 +77,8 @@ def delete_account():
 
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    #cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    cursor.execute(f"DELETE FROM user WHERE id = {user_id}")
     conn.commit()
     conn.close()
 
