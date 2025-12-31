@@ -8,13 +8,13 @@ register_bp = Blueprint('register', __name__)
 @register_bp.route('/register', methods=['GET', 'POST'], endpoint='register')
 def register():
     if request.method == 'POST':
-        user_id = request.form['user_id']
+        username = request.form['username']
         password = request.form['password']
         password_confirm = request.form['password_confirm']
-        name = request.form['name']
+        nickname = request.form['nickname']
         email = request.form.get('email', '')
-        phone = request.form.get('phone', '')
-        birthdate = request.form.get('birthdate', '')
+        # phone = request.form.get('phone', '')
+        # birthdate = request.form.get('birthdate', '')
 
         if password != password_confirm:
             flash('비밀번호가 일치하지 않습니다.')
@@ -24,10 +24,12 @@ def register():
         conn = get_db()
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                "INSERT INTO users (user_id, password, name, email, phone, birthdate) VALUES (?, ?, ?, ?, ?, ?)",
-                (user_id, password, name, email, phone, birthdate)
-            )
+            # cursor.execute(
+            #     "INSERT INTO users (username, password, nickname, email) VALUES (?, ?, ?, ?)",
+            #     (username, password, nickname, email)
+            # )
+            query = f"INSERT INTO users (username, password, nickname, email) VALUES ({username}, {password}, {nickname}, {email})"
+            cursor.execute(query)
             conn.commit()
             flash('회원가입이 완료되었습니다. 로그인해주세요.')
             return redirect(url_for('login'))

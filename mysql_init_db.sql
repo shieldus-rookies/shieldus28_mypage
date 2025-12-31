@@ -22,23 +22,24 @@ CREATE TABLE IF NOT EXISTS accounts (
   CONSTRAINT fk_accounts_users1
     FOREIGN KEY (users_id)
     REFERENCES users (id)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS transactions (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  from_acc INT NOT NULL,
-  to_acc INT NOT NULL,
+  from_acc VARCHAR(20) NOT NULL,
+  to_acc VARCHAR(20) NOT NULL,
   amount DECIMAL(18,2),
-  memo TEXT,
+  balance_after DECIMAL(18,2),
+  description TEXT,
   xml_log TEXT,
   accounts_id INT NOT NULL,
   INDEX fk_transactions_accounts1_idx (accounts_id),
   CONSTRAINT fk_transactions_accounts1
     FOREIGN KEY (accounts_id)
     REFERENCES accounts (id)
-    ON DELETE NO ACTION
+    ON DELETE CASCADE
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -56,6 +57,26 @@ CREATE TABLE IF NOT EXISTS posts (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS post_files (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+  posts_id INT NOT NULL,
+  INDEX fk_post_files_posts1_idx (posts_id),
+
+  original_name VARCHAR(255) NOT NULL,   -- 사용자가 업로드한 파일명
+  stored_name   VARCHAR(255) NOT NULL,   -- 서버에 저장된 파일명(충돌 방지용 UUID 등)
+  mime_type     VARCHAR(100) NULL,       -- 예: image/png
+  file_size     BIGINT NULL,             -- bytes
+  created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_post_files_posts1
+    FOREIGN KEY (posts_id)
+    REFERENCES posts (id)
+    ON DELETE CASCADE
+    ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS exchange_rates (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
