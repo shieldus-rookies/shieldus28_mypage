@@ -13,7 +13,8 @@ def dashboard():
     cursor = conn.cursor()
 
     # 사용자 계좌 목록 조회
-    cursor.execute("SELECT * FROM accounts WHERE users_id = ?", (session['user_id'],))
+    # cursor.execute("SELECT * FROM accounts WHERE users_id = ?", (session['user_id'],))
+    cursor.execute(f"SELECT * FROM accounts WHERE users_id = {session['user_id']}")
     accounts = cursor.fetchall()
 
     # 최근 거래내역 (최근 10건)
@@ -53,10 +54,12 @@ def create_account():
         conn = get_db()
         cursor = conn.cursor()
         try:
-            cursor.execute(
-                "INSERT INTO accounts (account_number, user_id, balance, account_type) VALUES (?, ?, ?, ?)",
-                (account_number, session['user_id'], initial_balance, account_type)
-            )
+            # cursor.execute(
+            #     "INSERT INTO accounts (account_number, user_id, balance, account_type) VALUES (?, ?, ?, ?)",
+            #     (account_number, session['user_id'], initial_balance, account_type)
+            # )
+            query = f"INSERT INTO accounts (account_number, users_id, balance, account_type) VALUES ('{account_number}', {session['user_id']}, {initial_balance}, '{account_type}')"
+            cursor.execute(query)
             conn.commit()
             flash(f'계좌가 개설되었습니다! 계좌번호: {account_number}')
             return redirect(url_for('dashboard'))
