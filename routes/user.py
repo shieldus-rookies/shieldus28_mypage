@@ -24,7 +24,7 @@ def mypage():
 @login_required
 def edit_profile():
     if request.method == 'POST':
-        name = request.form['name']
+        nickname = request.form['nickname']
         email = request.form['email']
         #phone = request.form['phone']
 
@@ -44,7 +44,7 @@ def edit_profile():
         #     query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}', profile_image='{profile_filename}' WHERE id={session['user_id']}"
         # else:
         #     query = f"UPDATE users SET name='{name}', email='{email}', phone='{phone}' WHERE id={session['user_id']}"
-        query = f"UPDATE users SET name='{name}', email='{email}' WHERE id={session['user_id']}"
+        query = f"UPDATE users SET nickname='{nickname}', email='{email}' WHERE id={session['user_id']}"
 
         conn = get_db()
         cursor = conn.cursor()
@@ -53,7 +53,7 @@ def edit_profile():
         conn.close()
 
         # 세션 정보 업데이트
-        session['username'] = name
+        session['username'] = nickname
 
         flash('회원정보가 수정되었습니다.')
         return redirect(url_for('mypage'))

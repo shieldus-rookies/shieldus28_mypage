@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
   password TEXT NOT NULL,
   email TEXT,
   nickname TEXT,
-  role TEXT DEFAULT 'user'
+  role TEXT DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS accounts (
