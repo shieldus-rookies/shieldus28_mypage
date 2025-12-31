@@ -86,7 +86,7 @@ def transactions():
             FROM transactions t
             JOIN accounts a ON t.accounts_id = a.id
             WHERE a.users_id = {session['user_id']}
-            AND (t.description LIKE '%{search}%' OR t.recipient_name LIKE '%{search}%')
+            AND (t.description LIKE '%{search}%')
             ORDER BY t.created_at DESC
         """
     elif account_id:
