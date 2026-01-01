@@ -78,7 +78,7 @@ def delete_account():
     conn = get_db()
     cursor = conn.cursor()
     #cursor.execute("DELETE FROM users WHERE id = ?", (user_id,))
-    cursor.execute(f"DELETE FROM user WHERE id = {user_id}")
+    cursor.execute(f"DELETE FROM users WHERE id = {user_id}")
     conn.commit()
     conn.close()
 
