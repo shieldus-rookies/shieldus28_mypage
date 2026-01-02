@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 # Get the base directory (where config.py is located)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
 # 취약점: 하드코딩된 secret key
 # SECRET_KEY = 'vulnerable-secret-key-12345'
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key') # 추가
