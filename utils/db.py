@@ -11,6 +11,7 @@ def get_db():
 import os
 import pymysql
 import config
+from typing import Optional
 
 def get_db():
     try:
@@ -48,7 +49,7 @@ def _load_sql_statements(sql_path: str) -> list[str]:
     return statements
 
 
-def init_db(sql_path: str | None = None) -> bool:
+def init_db(sql_path: Optional[str] = None) -> bool:
     """
     최초 1회만 초기화:
     - users 테이블이 이미 있으면 스킵(데이터 날아가는 것 방지)
