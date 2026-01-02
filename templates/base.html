@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Shieldus Bank{% endblock %}</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css')}}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <i class="bi bi-shield-check"></i> Shieldus Bank
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if session.user_id %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">
+                            <i class="bi bi-house-door"></i> 대시보드
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-stack"></i> 금융서비스
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.create_account') }}">계좌 개설</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.deposit') }}">입금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.withdraw') }}">출금</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('transfer.transfer') }}">송금</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('dashboard.transactions') }}">거래내역 조회</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('qna_list') }}">
+                            <i class="bi bi-chat-dots"></i> 고객센터
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if session.user_id %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ session.username }}님
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="{{ url_for('mypage') }}">마이페이지</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('edit_profile') }}">회원정보 수정</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('logout') }}">로그아웃</a></li>
+                        </ul>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="bi bi-box-arrow-in-right"></i> 로그인
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">
+                            <i class="bi bi-person-plus"></i> 회원가입
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="container mt-4">
+            {% for message in messages %}
+            <div class="alert alert-info alert-custom alert-dismissible fade show" role="alert">
+                <i class="bi bi-info-circle"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5><i class="bi bi-shield-check"></i> Shieldus Bank</h5>
+                    <p class="text-white-50">안전하고 신뢰할 수 있는 금융 서비스</p>
+                    <p class="text-danger small">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>경고:</strong> 이 사이트는 교육용 취약점 진단 프로젝트입니다.
+                        실제 금융 정보를 입력하지 마세요!
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6>빠른 링크</h6>
+                    <ul class="list-unstyled text-white-50">
+                        <li><a href="{{ url_for('index') }}" class="text-white-50 text-decoration-none">홈</a></li>
+                        {% if session.user_id %}
+                        <li><a href="{{ url_for('dashboard') }}" class="text-white-50 text-decoration-none">대시보드</a></li>
+                        <li><a href="{{ url_for('qna_list') }}" class="text-white-50 text-decoration-none">고객센터</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>고객센터</h6>
+                    <ul class="list-unstyled text-white-50">
+                        <li><i class="bi bi-telephone"></i> 1588-0000</li>
+                        <li><i class="bi bi-envelope"></i> support@shieldusbank.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-white-50">
+            <div class="text-center text-white-50">
+                <p class="mb-0">&copy; 2024 Shieldus Bank. All rights reserved.</p>
+                <p class="small">본 프로젝트는 교육용이며, 실제 금융 서비스가 아닙니다.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

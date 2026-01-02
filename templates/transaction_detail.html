@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}거래 상세 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header bg-light">
+                <h4 class="mb-0"><i class="bi bi-receipt"></i> 거래 상세 내역</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">거래 번호</div>
+                    <div class="col-8"><strong>#{{ transaction.id }}</strong></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">거래 일시</div>
+                    <div class="col-8">{{ transaction.created_at }}</div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">계좌번호</div>
+                    <div class="col-8"><code>{{ transaction.account_number }}</code></div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">거래 유형</div>
+                    <div class="col-8">
+                        {% if transaction.from_acc == '0' %}
+                            <span class="badge bg-success">입금</span>
+                        {% elif transaction.to_acc == '0' %}
+                            <span class="badge bg-danger">출금</span>
+                        {% else %}
+                            <span class="badge bg-primary">송금</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">거래 금액</div>
+                    <div class="col-8">
+                        <span class="{% if transaction.amount > 0 %}transaction-positive{% else %}transaction-negative{% endif %}"
+                              style="font-size: 1.5rem; font-weight: 700;">
+                            {{ "{:+,.0f}".format(transaction.amount) }}원
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">거래 후 잔액</div>
+                    <div class="col-8">
+                        <strong>{{ "{:,.0f}".format(transaction.balance_after) }}원</strong>
+                    </div>
+                </div>
+
+                {% if transaction.recipient_account %}
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">수취인 계좌</div>
+                    <div class="col-8"><code>{{ transaction.recipient_account }}</code></div>
+                </div>
+                {% endif %}
+
+                {% if transaction.recipient_name %}
+                <div class="row mb-3">
+                    <div class="col-4 text-muted">수취인</div>
+                    <div class="col-8">{{ transaction.recipient_name }}</div>
+                </div>
+                {% endif %}
+
+                <div class="row mb-4">
+                    <div class="col-4 text-muted">거래 내용</div>
+                    <div class="col-8">
+                        <!-- 취약점: Stored XSS - |safe 필터 사용 -->
+                        <div class="alert alert-light">{{ transaction.description|safe }}</div>
+                    </div>
+                </div>
+
+                {% if transaction.receipt_image %}
+                <div class="row mb-4">
+                    <div class="col-4 text-muted">영수증</div>
+                    <div class="col-8">
+                        <img src="{{ url_for('static', filename='uploads/receipts/' + transaction.receipt_image) }}"
+                             class="img-fluid" alt="영수증" style="max-width: 300px;">
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="alert alert-warning">
+                    <i class="bi bi-bug"></i>
+                    <strong>취약점:</strong> IDOR - transaction_id 조작으로 타인 거래내역 조회 가능
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('dashboard.transactions') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-arrow-left"></i> 거래내역 목록
+                    </a>
+                    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house"></i> 대시보드
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

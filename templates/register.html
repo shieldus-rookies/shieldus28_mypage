@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}회원가입 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-custom">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <div class="mb-3" style="font-size: 4rem; color: var(--secondary-color);">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <h2 class="mb-2">회원가입</h2>
+                    <p class="text-muted">새로운 계정을 만들어보세요</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('register.register') }}">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="user_id" class="form-label">
+                                <i class="bi bi-person-badge"></i> 아이디 <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="username" name="username" required autofocus>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="nickname" class="form-label">
+                                <i class="bi bi-person"></i> 이름 <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="nickname" name="nickname" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="password" class="form-label">
+                                <i class="bi bi-key"></i> 비밀번호 <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="password_confirm" class="form-label">
+                                <i class="bi bi-key-fill"></i> 비밀번호 확인 <span class="text-danger">*</span>
+                            </label>
+                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope"></i> 이메일
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="example@email.com">
+                    </div>
+
+                    <!-- <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="bi bi-telephone"></i> 전화번호
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="010-1234-5678">
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="birthdate" class="form-label">
+                                <i class="bi bi-calendar"></i> 생년월일
+                            </label>
+                            <input type="date" class="form-control" id="birthdate" name="birthdate">
+                        </div>
+                    </div> -->
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-gold btn-lg">
+                            <i class="bi bi-check-circle"></i> 회원가입
+                        </button>
+                    </div>
+                </form>
+
+                <hr class="my-4">
+
+                <div class="text-center">
+                    <p class="text-muted mb-2">이미 계정이 있으신가요?</p>
+                    <a href="{{ url_for('login.login') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-box-arrow-in-right"></i> 로그인
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

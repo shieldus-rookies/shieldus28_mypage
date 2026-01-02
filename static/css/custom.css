@@ -1,0 +1,78 @@
+/* Shieldus Bank Custom CSS */
+/* 추가 커스텀 스타일 (base.html에 기본 스타일 포함됨) */
+
+/* 폰트 임포트 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+/* 부드러운 스크롤 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 카드 hover 애니메이션 강화 */
+.card-custom {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-custom:hover {
+    transform: translateY(-8px);
+}
+
+/* 입력 필드 focus 스타일 */
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 61, 130, 0.25);
+}
+
+/* 버튼 애니메이션 */
+.btn {
+    transition: all 0.3s ease;
+}
+
+/* 테이블 행 hover */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 61, 130, 0.05);
+}
+
+/* 뱃지 스타일 */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+}
+
+/* 로딩 애니메이션 */
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.3em;
+}
+
+/* 추가 유틸리티 클래스 */
+.shadow-custom {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+}
+
+.border-custom {
+    border: 2px solid var(--primary-color) !important;
+}
+
+/* 반응형 폰트 크기 */
+@media (max-width: 768px) {
+    .balance-display {
+        font-size: 1.5rem;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+}
+
+/* 인쇄 스타일 */
+@media print {
+    .navbar-custom,
+    .footer-custom,
+    .btn,
+    .alert-warning {
+        display: none !important;
+    }
+}

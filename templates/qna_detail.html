@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}문의 상세 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- 문의 내용 -->
+        <div class="card card-custom mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="bi bi-chat-quote"></i> 문의 내용</h4>
+                {% if qna.status == 'ANSWERED' %}
+                    <span class="badge bg-success">답변완료</span>
+                {% else %}
+                    <span class="badge bg-secondary">대기중</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <!-- 취약점: Stored XSS - |safe 필터 사용 -->
+                <h5 class="mb-3">{{ qna.title|safe }}</h5>
+                <div class="mb-3 p-3 bg-light rounded">
+                    {{ qna.question|safe }}
+                </div>
+                <small class="text-muted">
+                    <i class="bi bi-calendar"></i> 작성일: {{ qna.created_at }}
+                </small>
+
+                <!-- 첨부파일 -->
+                {% if files %}
+                <div class="mt-4">
+                    <h6><i class="bi bi-paperclip"></i> 첨부파일 ({{ files|length }}개)</h6>
+                    <div class="list-group">
+                        {% for file in files %}
+                        <div class="list-group-item">
+                            <i class="bi bi-file-earmark"></i>
+                            <strong>{{ file.filename }}</strong>
+                            <span class="text-muted small">
+                                ({{ "{:,}".format(file.file_size) }} bytes)
+                            </span>
+                            <a href="{{ url_for('static', filename='uploads/qna/' + file.filename) }}"
+                               target="_blank" class="btn btn-sm btn-outline-primary float-end">
+                                <i class="bi bi-download"></i> 다운로드
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 답변 -->
+        {% if qna.answer %}
+        <div class="card card-custom mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-reply"></i> 관리자 답변</h5>
+            </div>
+            <div class="card-body">
+                <div class="p-3 bg-light rounded">
+                    {{ qna.answer }}
+                </div>
+                <small class="text-muted">
+                    <i class="bi bi-calendar"></i> 답변일: {{ qna.answered_at }}
+                </small>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="bi bi-clock-history"></i> 관리자 답변을 기다리고 있습니다.
+        </div>
+        {% endif %}
+
+        <!-- 취약점 안내 -->
+        <div class="alert alert-warning mb-4">
+            <i class="bi bi-bug"></i>
+            <strong>취약점:</strong> IDOR - qna_id 조작으로 타인 문의 조회 가능
+        </div>
+
+        <!-- 버튼 -->
+        <div class="d-grid gap-2">
+            <form method="POST" action="{{ url_for('qna.qna_delete', qna_id=qna.id) }}" style="display: inline;">
+                <button type="submit" class="btn btn-danger w-100"
+                        onclick="return confirm('정말 삭제하시겠습니까?')">
+                    <i class="bi bi-trash"></i> 문의 삭제
+                </button>
+            </form>
+            <a href="{{ url_for('qna.qna_list') }}" class="btn btn-outline-primary">
+                <i class="bi bi-list-ul"></i> 문의 목록
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

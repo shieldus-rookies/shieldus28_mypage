@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}계좌 개설 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card card-custom">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-plus-circle"></i> 새 계좌 개설</h4>
+            </div>
+            <div class="card-body p-5">
+                <div class="alert alert-info mb-4">
+                    <i class="bi bi-info-circle"></i> 새로운 계좌를 개설하여 금융 서비스를 이용하세요!
+                </div>
+
+                <form method="POST" action="{{ url_for('dashboard.create_account') }}">
+                    <div class="mb-4">
+                        <label for="account_type" class="form-label">
+                            <i class="bi bi-bank"></i> 계좌 종류 <span class="text-danger">*</span>
+                        </label>
+                        <select class="form-select form-select-lg" id="account_type" name="account_type" required>
+                            <option value="SAVINGS">입출금통장 (적금형)</option>
+                            <option value="CHECKING">자유입출금통장</option>
+                        </select>
+                        <div class="form-text">
+                            입출금통장: 이자가 적용되는 저축형 계좌<br>
+                            자유입출금: 제한 없이 자유롭게 사용 가능한 계좌
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="initial_balance" class="form-label">
+                            <i class="bi bi-cash"></i> 초기 입금액
+                        </label>
+                        <input type="number" class="form-control form-control-lg" id="initial_balance"
+                               name="initial_balance" value="0" min="0" step="1000">
+                        <div class="form-text">
+                            최소 입금액: 0원 (나중에 입금 가능)
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>취약점:</strong> 초기 입금액을 음수로 설정할 수 있습니다 (파라미터 변조)
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-gold btn-lg">
+                            <i class="bi bi-check-circle"></i> 계좌 개설하기
+                        </button>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> 취소
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

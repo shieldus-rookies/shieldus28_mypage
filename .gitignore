@@ -1,0 +1,17 @@
+# 환경 변수 파일 (비밀번호 노출 방지)
+.env
+
+# 파이썬 컴파일 파일
+__pycache__/
+*.pyc
+
+# 가상환경
+venv/
+.venv
+
+# 구버전 SQLite 파일
+*.db
+
+# 기타 설정
+.vscode/
+.idea/

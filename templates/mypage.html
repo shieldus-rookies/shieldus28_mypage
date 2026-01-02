@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}마이페이지 - Shieldus Bank{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-person-circle"></i> 마이페이지</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- 프로필 이미지 -->
+                <div class="text-center mb-4">
+                    {% if user.profile_image %}
+                    <img src="{{ url_for('static', filename='uploads/profiles/' + user.profile_image) }}"
+                         class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" alt="프로필">
+                    {% else %}
+                    <div class="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center"
+                         style="width: 150px; height: 150px;">
+                        <i class="bi bi-person-fill text-white" style="font-size: 80px;"></i>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- 회원 정보 -->
+                <div class="table-responsive">
+                    <table class="table table-borderless">
+                        <tbody>
+                            <tr>
+                                <th width="30%" class="text-muted">아이디</th>
+                                <td><strong>{{ user.username }}</strong></td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">이름</th>
+                                <td>{{ user.nickname }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">이메일</th>
+                                <td>{{ user.email if user.email else '-' }}</td>
+                            </tr>
+                            <!-- <tr>
+                                <th class="text-muted">전화번호</th>
+                                <td>{{ user.phone if user.phone else '-' }}</td>
+                            </tr>
+                            <tr>
+                                <th class="text-muted">생년월일</th>
+                                <td>{{ user.birthdate if user.birthdate else '-' }}</td>
+                            </tr>
+                            <tr> -->
+                                <th class="text-muted">가입일</th>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 버튼 -->
+                <div class="d-grid gap-2 mt-4">
+                    <a href="{{ url_for('user.edit_profile') }}" class="btn btn-primary-custom btn-lg">
+                        <i class="bi bi-pencil-square"></i> 회원정보 수정
+                    </a>
+                    <a href="{{ url_for('dashboard.dashboard') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-house"></i> 대시보드로 돌아가기
+                    </a>
+                </div>
+
+                <!-- 회원 탈퇴 -->
+                <hr class="my-4">
+                <div class="text-center">
+                    <form method="POST" action="{{ url_for('user.delete_account') }}" style="display: inline;">
+                        <button type="submit" class="btn btn-link text-danger"
+                                onclick="return confirm('정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.')">
+                            <i class="bi bi-person-x"></i> 회원 탈퇴
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
