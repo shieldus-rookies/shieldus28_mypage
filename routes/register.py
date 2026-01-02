@@ -1,6 +1,8 @@
+# routes/register.py
 from flask import Blueprint, render_template, redirect, request, url_for, flash
 import sqlite3
 from utils.db import get_db
+import pymysql # 추가
 
 register_bp = Blueprint('register', __name__)
 
@@ -33,9 +35,13 @@ def register():
             conn.commit()
             flash('회원가입이 완료되었습니다. 로그인해주세요.')
             return redirect(url_for('login'))
-        except sqlite3.IntegrityError:
-            flash('이미 존재하는 아이디입니다.')
-            return redirect(url_for('register'))
+        except pymysql.err.IntegrityError as e: # sqlite3.IntegrityError:
+            if e.args[0] == 1062:
+                flash('이미 존재하는 아이디입니다.')
+                return redirect(url_for('register'))
+            else :
+                flash('데이터베이스 오류가 발생했습니다.')
+                return render_template('register.html')
         finally:
             conn.close()
 

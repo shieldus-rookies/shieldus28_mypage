@@ -1,3 +1,4 @@
+// transactions.html
 {% extends "base.html" %}
 
 {% block title %}거래내역 - Shieldus Bank{% endblock %}
@@ -59,7 +60,7 @@
                         <tbody>
                             {% for trans in transactions %}
                             <tr>
-                                <td>{{ trans.created_at[:16] }}</td>
+                                <td>{{ trans.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td><small class="text-muted">{{ trans.account_number }}</small></td>
                                 <td>
                                     {% if trans.transaction_type == 'DEPOSIT' %}

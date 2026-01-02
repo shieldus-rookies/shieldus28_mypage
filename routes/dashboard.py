@@ -1,3 +1,4 @@
+# dashboard.py
 from flask import Blueprint, render_template, redirect, request, url_for, session, flash
 import random
 from utils.db import get_db
@@ -22,7 +23,7 @@ def dashboard():
         SELECT t.*, a.account_number, a.account_type
         FROM transactions t
         JOIN accounts a ON t.accounts_id = a.id
-        WHERE a.users_id = ?
+        WHERE a.users_id = %s
         ORDER BY t.created_at DESC
         LIMIT 10
     """, (session['user_id'],))

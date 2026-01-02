@@ -1,95 +1,84 @@
--- CREATE DATABASE IF NOT EXISTS mydb
+-- CREATE DATABASE IF NOT EXISTS shieldus_bank
 --   CHARACTER SET utf8
 --   COLLATE utf8_general_ci;
 
--- USE mydb;
+-- USE shieldus_bank;
+
+USE shieldus_bank;
+
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS post_files, posts, transactions, accounts, users, exchange_rates;
+SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT NOT NULL UNIQUE,
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  username VARCHAR(255) NOT NULL UNIQUE,
   password TEXT NOT NULL,
   email TEXT,
   nickname TEXT,
-  role TEXT DEFAULT 'user',
+  role VARCHAR(255) DEFAULT 'user',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS accounts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  account_number TEXT NOT NULL UNIQUE,
-  balance NUMERIC DEFAULT 0,
-  account_type TEXT DEFAULT 'SAVINGS',
-  users_id INTEGER NOT NULL,
-  FOREIGN KEY (users_id)
-    REFERENCES users (id)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  account_number VARCHAR(255) NOT NULL UNIQUE,
+  balance DOUBLE DEFAULT 0,
+  account_type VARCHAR(50) DEFAULT 'SAVINGS',
+  users_id INT NOT NULL,
+  CONSTRAINT fk_accounts_users FOREIGN KEY (users_id) 
+    REFERENCES users (id) ON DELETE CASCADE,
+  INDEX idx_accounts_users_id (users_id)
 );
-
--- MySQL의 INDEX는 SQLite에서 보통 별도 CREATE INDEX로 생성합니다.
-CREATE INDEX IF NOT EXISTS idx_accounts_users_id
-  ON accounts(users_id);
 
 CREATE TABLE IF NOT EXISTS transactions (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  from_acc TEXT NOT NULL,
-  to_acc TEXT NOT NULL,
-  amount NUMERIC,
-  balance_after NUMERIC,
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  from_acc VARCHAR(255) NOT NULL,
+  to_acc VARCHAR(255) NOT NULL,
+  amount DOUBLE,
+  balance_after DOUBLE,
   description TEXT,
   xml_log TEXT,
-  accounts_id INTEGER NOT NULL,
+  accounts_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (accounts_id)
-    REFERENCES accounts (id)
-    ON DELETE CASCADE
-    ON UPDATE NO ACTION
+  CONSTRAINT fk_transactions_accounts FOREIGN KEY (accounts_id) 
+    REFERENCES accounts (id) ON DELETE CASCADE,
+  INDEX idx_transactions_accounts_id (accounts_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_transactions_accounts_id
-  ON transactions(accounts_id);
 
--- ENUM('notice','qna') -> CHECK 제약으로 변환
--- TINYINT -> INTEGER(+ CHECK)로 변환
 CREATE TABLE IF NOT EXISTS posts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  type TEXT DEFAULT 'qna' CHECK (type IN ('notice', 'qna')),
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  type VARCHAR(20) DEFAULT 'qna', 
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   answer TEXT,
-  status TEXT DEFAULT 'PENDING',
-  is_secret INTEGER DEFAULT 0 CHECK (is_secret IN (0, 1)),
-  users_id INTEGER NOT NULL,
+  status VARCHAR(20) DEFAULT 'PENDING',
+  is_secret INT DEFAULT 0,
+  users_id INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  answered_at TIMESTAMP,
-  FOREIGN KEY (users_id)
-    REFERENCES users (id)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION
+  answered_at TIMESTAMP NULL DEFAULT NULL, 
+  CONSTRAINT fk_posts_users FOREIGN KEY (users_id) 
+    REFERENCES users (id) ON DELETE NO ACTION,
+  INDEX idx_posts_users_id (users_id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_posts_users_id
-  ON posts(users_id);
 
 CREATE TABLE IF NOT EXISTS post_files (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  post_id INTEGER NOT NULL,
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  post_id INT NOT NULL,
   filename TEXT NOT NULL,
   filepath TEXT NOT NULL,
-  file_size INTEGER,
+  file_size INT,
   upload_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (post_id)
-    REFERENCES posts(id)
-    ON DELETE CASCADE
+  CONSTRAINT fk_post_files_posts FOREIGN KEY (post_id) 
+    REFERENCES posts(id) ON DELETE CASCADE,
+  INDEX idx_post_files_post_id (post_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_post_files_post_id
-  ON post_files(post_id);
-
 CREATE TABLE IF NOT EXISTS exchange_rates (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  currency TEXT NOT NULL,
-  rate NUMERIC NOT NULL DEFAULT 0,
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  currency VARCHAR(20) NOT NULL,
+  rate DOUBLE NOT NULL DEFAULT 0,
   provider_url TEXT
 );
 
