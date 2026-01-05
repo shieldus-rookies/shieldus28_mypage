@@ -15,8 +15,7 @@ def register():
         password_confirm = request.form['password_confirm']
         nickname = request.form['nickname']
         email = request.form.get('email', '')
-        # phone = request.form.get('phone', '')
-        # birthdate = request.form.get('birthdate', '')
+
 
         if password != password_confirm:
             flash('비밀번호가 일치하지 않습니다.')
@@ -26,10 +25,6 @@ def register():
         conn = get_db()
         cursor = conn.cursor()
         try:
-            # cursor.execute(
-            #     "INSERT INTO users (username, password, nickname, email) VALUES (?, ?, ?, ?)",
-            #     (username, password, nickname, email)
-            # )
             query = f"INSERT INTO users (username, password, nickname, email) VALUES ('{username}', '{password}', '{nickname}', '{email}')"
             cursor.execute(query)
             conn.commit()

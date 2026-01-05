@@ -15,16 +15,6 @@ def deposit():
         amount = float(request.form['amount'])
         description = request.form.get('description', '입금')
 
-        # # 파일 업로드 처리 (영수증)?
-        # receipt_file = request.files.get('receipt')
-        # receipt_filename = None
-
-        # if receipt_file and receipt_file.filename:
-        #     # 취약점: File Upload - 확장자 검증 없음
-        #     receipt_filename = receipt_file.filename
-        #     receipt_path = os.path.join(config.RECEIPT_FOLDER, receipt_filename)
-        #     receipt_file.save(receipt_path)
-
         # 취약점: 파라미터 변조 - 금액을 클라이언트에서 받아서 그대로 신뢰
         # 취약점: IDOR - account_id 조작으로 타인 계좌에 입금 가능
 
@@ -32,8 +22,6 @@ def deposit():
         cursor = conn.cursor()
 
         # 현재 잔액 조회
-        # cursor.execute("SELECT balance FROM accounts WHERE id = ?", (account_id,))
-        # account = cursor.fetchone()
         query = f"SELECT account_number, balance FROM accounts WHERE id = {account_id}"
         cursor.execute(query)
         account = cursor.fetchone()
@@ -46,16 +34,10 @@ def deposit():
         account_number = account['account_number']
 
         # 잔액 업데이트
-        # cursor.execute("UPDATE accounts SET balance = ? WHERE id = ?", (new_balance, account_id))
         query = f"UPDATE accounts SET balance = {new_balance} WHERE id = {account_id}"
         cursor.execute(query)
 
         # 거래내역 저장
-        # cursor.execute(
-        #     "INSERT INTO transactions (accounts_id, transaction_type, amount, balance_after, description, receipt_image) VALUES (?, ?, ?, ?, ?, ?)",
-        #     (account_id, 'DEPOSIT', amount, new_balance, description, receipt_filename)
-        # )
-
         query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, '0', '{account_number}', {amount}, {new_balance}, '{description}')"
         cursor.execute(query)
 
@@ -68,7 +50,6 @@ def deposit():
     # GET 요청: 사용자 계좌 목록 조회
     conn = get_db()
     cursor = conn.cursor()
-    # users_id? user_id?
     query = f"SELECT * FROM accounts WHERE users_id = {session['user_id']}"
     cursor.execute(query)
     accounts = cursor.fetchall()
@@ -92,8 +73,6 @@ def withdraw():
         cursor = conn.cursor()
 
         # 현재 잔액 조회
-        # cursor.execute("SELECT account_number, balance FROM accounts WHERE id = ?", (account_id,))
-        # account = cursor.fetchone()
         query = f"SELECT account_number, balance FROM accounts WHERE id = {account_id}"
         cursor.execute(query)
         account = cursor.fetchone()
@@ -111,15 +90,10 @@ def withdraw():
         account_number = account['account_number']
 
         # 잔액 업데이트
-        # cursor.execute("UPDATE accounts SET balance = ? WHERE id = ?", (new_balance, account_id))
         query = f"UPDATE accounts SET balance = {new_balance} WHERE id = {account_id}"
         cursor.execute(query)
 
         # 거래내역 저장
-        # cursor.execute(
-        #     "INSERT INTO transactions (account_id, from_acc, to_acc, amount, balance_after, description) VALUES (?, ?, ?, ?, ?)",
-        #     (account_id, account_number, '0', -amount, new_balance, description)
-        # )
         query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({account_id}, '{account_number}', '0', -{amount}, {new_balance}, '{description}')"
         cursor.execute(query)
 
@@ -132,8 +106,6 @@ def withdraw():
     # GET 요청
     conn = get_db()
     cursor = conn.cursor()
-    # cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (session['user_id'],))
-    # accounts = cursor.fetchall()
     query = f"SELECT * FROM accounts WHERE users_id = {session['user_id']}"
     cursor.execute(query)
     accounts = cursor.fetchall()
@@ -159,15 +131,11 @@ def transfer():
         cursor = conn.cursor()
 
         # 출금 계좌 조회
-        # cursor.execute("SELECT * FROM accounts WHERE id = ?", (from_account_id,))
-        # from_account = cursor.fetchone()
         query = f"SELECT * FROM accounts WHERE id = {from_account_id}"
         cursor.execute(query)
         from_account = cursor.fetchone()
 
         # 입금 계좌 조회
-        # cursor.execute("SELECT * FROM accounts WHERE account_number = ?", (to_account_number,))
-        # to_account = cursor.fetchone()
         query = f"SELECT * FROM accounts WHERE account_number = '{to_account_number}'"
         cursor.execute(query)
         to_account = cursor.fetchone()
@@ -184,25 +152,16 @@ def transfer():
 
         # 출금 처리
         new_from_balance = from_account['balance'] - amount
-        # cursor.execute("UPDATE accounts SET balance = ? WHERE id = ?", (new_from_balance, from_account['id']))
         query = f"UPDATE accounts SET balance = {new_from_balance} WHERE id = {from_account['id']}"
         cursor.execute(query)
-        # cursor.execute(
-        #     "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description, recipient_account, recipient_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        #     (from_account['id'], 'TRANSFER', -amount, new_from_balance, memo, to_account_number, recipient_name)
-        # )
         query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({from_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', -{amount}, {new_from_balance}, '{description}')"
         cursor.execute(query)
 
         # 입금 처리
         new_to_balance = to_account['balance'] + amount
-        # cursor.execute("UPDATE accounts SET balance = ? WHERE id = ?", (new_to_balance, to_account['id']))
         query = f"UPDATE accounts SET balance = {new_to_balance} WHERE id = {to_account['id']}"
         cursor.execute(query)
-        # cursor.execute(
-        #     "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description, recipient_account, recipient_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        #     (to_account['id'], 'TRANSFER', amount, new_to_balance, f'{from_account["account_number"]}에서 받음', from_account['account_number'], session['username'])
-        # )
+
         query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({to_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', {amount}, {new_to_balance}, '{description}')"
         cursor.execute(query)
 
@@ -215,7 +174,6 @@ def transfer():
     # GET 요청
     conn = get_db()
     cursor = conn.cursor()
-    # cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (session['user_id'],))
     query = f"SELECT * FROM accounts WHERE users_id = {session['user_id']}"
     cursor.execute(query)
     accounts = cursor.fetchall()

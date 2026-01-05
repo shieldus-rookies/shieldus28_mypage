@@ -14,7 +14,6 @@ def qna_list():
     cursor = conn.cursor()
 
     # 자신이 작성한 문의만 조회 (정상적인 경우)
-    # cursor.execute("SELECT * FROM qna WHERE user_id = ? ORDER BY created_at DESC", (session['user_id'],))
     cursor.execute(
         f"SELECT * FROM posts WHERE users_id = {session['user_id']} ORDER BY created_at DESC"
     )
@@ -35,10 +34,6 @@ def qna_write():
 
         conn = get_db()
         cursor = conn.cursor()
-        # cursor.execute(
-        #     "INSERT INTO qna (user_id, title, question) VALUES (?, ?, ?)",
-        #     (session['user_id'], title, question)
-        # )
         cursor.execute(
                 f"INSERT INTO posts (users_id, title, content) VALUES ({session['user_id']}, '{title}', '{content}')"
             )
@@ -55,10 +50,6 @@ def qna_write():
 
                 # 파일 정보 저장
                 file_size = os.path.getsize(filepath)
-                # cursor.execute(
-                #     "INSERT INTO post_files (post_id, filename, filepath, file_size) VALUES (?, ?, ?, ?)",
-                #     (post_id, filename, filepath, file_size)
-                # )
                 cursor.execute(
                     f"INSERT INTO post_files (post_id, filename, filepath, file_size) VALUES ({post_id}, '{filename}', '{filepath}', {file_size})"
                 )
@@ -79,7 +70,6 @@ def qna_detail(qna_id):
     cursor = conn.cursor()
 
     # 취약점: IDOR - 작성자 검증 없이 문의 조회
-    # cursor.execute("SELECT * FROM posts WHERE id = ?", (qna_id,))
     cursor.execute(f"SELECT * FROM posts WHERE id = {qna_id}")
     qna = cursor.fetchone()
 
@@ -88,7 +78,6 @@ def qna_detail(qna_id):
         return redirect(url_for('qna_list'))
 
     # 첨부파일 조회
-    # cursor.execute("SELECT * FROM post_files WHERE post_id = ?", (qna_id,))
     cursor.execute(f"SELECT * FROM post_files WHERE post_id = {qna_id}")
     files = cursor.fetchall()
     conn.close()
@@ -103,7 +92,6 @@ def qna_delete(qna_id):
     # 취약점: IDOR - 작성자 검증 없이 삭제
     conn = get_db()
     cursor = conn.cursor()
-    # cursor.execute("DELETE FROM posts WHERE id = ?", (qna_id,))
     cursor.execute(f"DELETE FROM posts WHERE id = {qna_id}")
     conn.commit()
     conn.close()

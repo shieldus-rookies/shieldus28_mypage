@@ -7,11 +7,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 # 취약점: 하드코딩된 secret key
-# SECRET_KEY = 'vulnerable-secret-key-12345'
 SECRET_KEY = os.getenv('SECRET_KEY', 'default-secret-key') # 추가
 
 # 데이터베이스 파일 경로
-# DB_PATH = os.path.join(BASE_DIR, 'vulnerable_app.db')
 DB_HOST = os.getenv('DB_HOST', 'localhost') # 추가
 DB_PORT = int(os.getenv('DB_PORT', 3306)) # 추가
 DB_USER = os.getenv('DB_USER', 'root') # 추가
