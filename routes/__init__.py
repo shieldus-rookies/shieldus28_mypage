@@ -5,7 +5,7 @@ def register_blueprints(app):
     from routes.dashboard import dashboard_bp
     from routes.transfer import transfer_bp
     from routes.user import user_bp
-    from routes.qna import qna_bp
+    from routes.qna import qna_bp 
 
     app.register_blueprint(login_bp)
     app.register_blueprint(register_bp)
