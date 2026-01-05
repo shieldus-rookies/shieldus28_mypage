@@ -71,7 +71,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ trans.description }}
+                                    {{ trans.description | safe }}
                                     {% if trans.recipient_name %}
                                         <br><small class="text-muted">→ {{ trans.recipient_name }}</small>
                                     {% endif %}

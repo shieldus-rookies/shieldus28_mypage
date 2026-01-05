@@ -203,7 +203,7 @@ def transfer():
         #     "INSERT INTO transactions (account_id, transaction_type, amount, balance_after, description, recipient_account, recipient_name) VALUES (?, ?, ?, ?, ?, ?, ?)",
         #     (to_account['id'], 'TRANSFER', amount, new_to_balance, f'{from_account["account_number"]}에서 받음', from_account['account_number'], session['username'])
         # )
-        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({to_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', {amount}, {new_to_balance}, '{from_account['account_number']}에서 받음')"
+        query = f"INSERT INTO transactions (accounts_id, from_acc, to_acc, amount, balance_after, description) VALUES ({to_account['id']}, '{from_account['account_number']}', '{to_account['account_number']}', {amount}, {new_to_balance}, '{description}')"
         cursor.execute(query)
 
         conn.commit()

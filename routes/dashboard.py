@@ -83,29 +83,16 @@ def transactions():
     if search:
         # 취약점: SQL Injection - 검색어 직접 결합
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.users_id = {session['user_id']}
-            AND (t.description LIKE '%{search}%')
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.users_id = {session['user_id']} AND (t.description LIKE '%{search}%') ORDER BY t.created_at DESC
         """
     elif account_id:
         # 취약점: IDOR - account_id 조작 가능
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.id = {account_id}
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.id = {account_id} ORDER BY t.created_at DESC
         """
     else:
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.users_id = {session['user_id']}
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.users_id = {session['user_id']} ORDER BY t.created_at DESC
         """
 
     cursor.execute(query)

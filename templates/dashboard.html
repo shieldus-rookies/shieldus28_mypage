@@ -160,7 +160,7 @@
                                         <span class="badge bg-primary">송금</span>
                                     {% endif %}
                                 </td>
-                                <td>{{ trans.description }}</td>
+                                <td>{{ trans.description | safe }}</td>
                                 <td class="text-end {% if trans.amount > 0 %}transaction-positive{% else %}transaction-negative{% endif %}">
                                     {{ "{:+,.0f}".format(trans.amount) }}원
                                 </td>
