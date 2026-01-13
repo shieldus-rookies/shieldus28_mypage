@@ -1,3 +1,4 @@
+# dashboard.py
 from flask import Blueprint, render_template, redirect, request, url_for, session, flash
 import random
 from utils.db import get_db
@@ -13,7 +14,6 @@ def dashboard():
     cursor = conn.cursor()
 
     # 사용자 계좌 목록 조회
-    # cursor.execute("SELECT * FROM accounts WHERE user_id = ?", (session['user_id'],))
     cursor.execute(f"SELECT * FROM accounts WHERE users_id = {session['user_id']}")
     accounts = cursor.fetchall()
 
@@ -22,7 +22,7 @@ def dashboard():
         SELECT t.*, a.account_number, a.account_type
         FROM transactions t
         JOIN accounts a ON t.accounts_id = a.id
-        WHERE a.users_id = ?
+        WHERE a.users_id = %s
         ORDER BY t.created_at DESC
         LIMIT 10
     """, (session['user_id'],))
@@ -54,10 +54,6 @@ def create_account():
         conn = get_db()
         cursor = conn.cursor()
         try:
-            # cursor.execute(
-            #     "INSERT INTO accounts (account_number, user_id, balance, account_type) VALUES (?, ?, ?, ?)",
-            #     (account_number, session['user_id'], initial_balance, account_type)
-            # )
             query = f"INSERT INTO accounts (account_number, users_id, balance, account_type) VALUES ('{account_number}', {session['user_id']}, {initial_balance}, '{account_type}')"
             cursor.execute(query)
             conn.commit()
@@ -82,29 +78,16 @@ def transactions():
     if search:
         # 취약점: SQL Injection - 검색어 직접 결합
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.users_id = {session['user_id']}
-            AND (t.description LIKE '%{search}%')
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.users_id = {session['user_id']} AND (t.description LIKE '%{search}%') ORDER BY t.created_at DESC
         """
     elif account_id:
         # 취약점: IDOR - account_id 조작 가능
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.id = {account_id}
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.id = {account_id} ORDER BY t.created_at DESC
         """
     else:
         query = f"""
-            SELECT t.*, a.account_number
-            FROM transactions t
-            JOIN accounts a ON t.accounts_id = a.id
-            WHERE a.users_id = {session['user_id']}
-            ORDER BY t.created_at DESC
+            SELECT t.*, a.account_number FROM transactions t JOIN accounts a ON t.accounts_id = a.id WHERE a.users_id = {session['user_id']} ORDER BY t.created_at DESC
         """
 
     cursor.execute(query)

@@ -59,19 +59,19 @@
                         <tbody>
                             {% for trans in transactions %}
                             <tr>
-                                <td>{{ trans.created_at[:16] }}</td>
+                                <td>{{ trans.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td><small class="text-muted">{{ trans.account_number }}</small></td>
                                 <td>
-                                    {% if trans.transaction_type == 'DEPOSIT' %}
+                                    {% if trans.from_acc == '0' %}
                                         <span class="badge bg-success">입금</span>
-                                    {% elif trans.transaction_type == 'WITHDRAW' %}
+                                    {% elif trans.to_acc == '0' %}
                                         <span class="badge bg-danger">출금</span>
                                     {% else %}
                                         <span class="badge bg-primary">송금</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ trans.description }}
+                                    {{ trans.description | safe }}
                                     {% if trans.recipient_name %}
                                         <br><small class="text-muted">→ {{ trans.recipient_name }}</small>
                                     {% endif %}

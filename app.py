@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import os
 import config
 from routes import register_blueprints
+from utils.db import init_db
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
@@ -10,6 +11,7 @@ app.secret_key = config.SECRET_KEY
 for folder in config.UPLOAD_FOLDERS:
     os.makedirs(folder, exist_ok=True)
 
+init_db()
 
 # ==================== 메인 페이지 ====================
 
